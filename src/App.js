@@ -926,7 +926,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-50 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-end mb-4">
-            <div className="inline-flex bg-white rounded-lg border border-gray-200 p-1">
+            <div style={{ display: 'none' }} className="inline-flex bg-white rounded-lg border border-gray-200 p-1">
               <button style={{ display: 'none' }}
                 onClick={() => setLang('da')}
                 className={`px-4 py-2 rounded text-sm font-medium transition-all ${
