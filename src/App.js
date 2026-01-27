@@ -927,7 +927,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-end mb-4">
             <div className="inline-flex bg-white rounded-lg border border-gray-200 p-1">
-              <button
+              <button style={{ display: 'none' }}
                 onClick={() => setLang('da')}
                 className={`px-4 py-2 rounded text-sm font-medium transition-all ${
                   lang === 'da' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
@@ -935,7 +935,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
               >
                 Dansk
               </button>
-              <button
+              <button style={{ display: 'none' }}
                 onClick={() => setLang('en')}
                 className={`px-4 py-2 rounded text-sm font-medium transition-all ${
                   lang === 'en' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
