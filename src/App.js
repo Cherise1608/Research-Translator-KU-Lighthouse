@@ -1,17 +1,336 @@
 import React, { useState, useEffect } from 'react';
 import { FileText, Loader2, User, Beaker, Target, HelpCircle, BookOpen, AlertCircle, ExternalLink, CheckCircle, Users, Lightbulb, TrendingUp } from 'lucide-react';
 
+// Translations object for bilingual support (Danish/English)
+const translations = {
+  da: {
+    // Header & general
+    title: 'Research Translator',
+    subtitle: 'Fra forskningssprog til forretningskontekst',
+    publicDataOnly: 'Kun offentlig data',
+
+    // Input form
+    urlPlaceholder: 'Paste Pure URL her (f.eks. https://pure.ku.dk/da/persons/123456)',
+    nameOptional: 'Eller søg efter navn',
+    namePlaceholder: 'F.eks. Morten Axel Pedersen',
+    urlOptional: 'Pure URL (anbefalet)',
+    generateBriefing: '📊 Generer Briefing',
+    processing: 'Analyserer',
+
+    // Instructions
+    howTo: 'Sådan bruger du værktøjet:',
+    step1: '1. Gå til pure.ku.dk og find forskeren',
+    step2: '2. Kopier URL fra browser (Ctrl+L, Ctrl+C)',
+    step3: '3. Paste URL i feltet herunder',
+    step4: '4. ELLER indtast forskerens fulde navn',
+    step5: '5. Klik "Generer Briefing"',
+
+    // Tabs
+    tabs: {
+      who: 'Hvem er de?',
+      what: 'Hvad forsker de i?',
+      publications: 'Publikationer',
+      applications: 'Anvendelse',
+      questions: 'Spørgsmål',
+      sources: 'Kilder'
+    },
+
+    // Buttons
+    backToSearch: 'Ny søgning',
+    exportPDF: 'Download PDF',
+    exportWord: 'Download Word',
+
+    // Warnings
+    warning: 'VIGTIGT: Dette værktøj bruger kun offentlige data fra KU Pure.',
+    doNotUpload: 'Upload IKKE POC-ansøgninger eller interne dokumenter.',
+    verifyInfo: 'Verificer altid informationen',
+    verifyInfoDesc: 'AI-genereret indhold kan indeholde fejl. Tjek altid kilder og faktuelle oplysninger før brug i møder.',
+
+    // Demo
+    quickDemo: '⚡ Quick demo',
+    orText: 'ELLER PRØV DEMO:',
+    orDivider: 'ELLER',
+
+    // Profile labels
+    background: 'Baggrund',
+    teaching: 'Undervisning',
+    primaryFocus: 'Primært Fokusområde',
+    currentProjects: 'Aktuelle Projekter',
+    collaborationNetwork: 'Samarbejdsnetværk',
+    frequentCoAuthors: 'Hyppige medforfattere:',
+    collaboratingInstitutions: 'Samarbejdsinstitutioner:',
+    commercialPotential: 'Kommercielt potentiale:',
+
+    // Research tab
+    researchLanguageToBusinessContext: 'Forskningssprog oversat til forretningskontekst',
+    researchLanguage: 'Forskningssprog:',
+    translatedToYourLanguage: 'Oversat til dit sprog:',
+    whyItMatters: 'Hvorfor det betyder noget',
+
+    // Publications tab
+    recentPublications: 'Seneste Publikationer',
+    twoMostRecent: 'De 2 seneste publikationer',
+    noPublications: 'Ingen publikationer tilgængelige i denne briefing.',
+
+    // Applications tab
+    whoAndHow: 'Hvem har gavn af forskningen og hvordan bruges den?',
+    whoBenefits: 'Hvem har gavn?',
+    howUsed: 'Hvordan bruges det?',
+    impactAreas: 'Impact Områder',
+    keyStakeholders: 'Nøgle Stakeholders',
+    marketAnalysis: 'Markedsanalyse',
+    competitors: 'Konkurrenter:',
+    marketTrends: 'Markedstendenser:',
+    potentialPitfalls: 'Potentielle Faldgruber:',
+
+    // Questions tab
+    questionsSubtitle: '5 spørgsmål baseret på forskerens specifikke metoder og resultater',
+    whyAskThis: 'Hvorfor stille dette:',
+
+    // Sources tab
+    primarySources: 'Primære kilder til briefingen',
+    personProfile: 'Type: Personprofil',
+    instituteWebsite: 'Type: Instituttets hjemmeside',
+    publicationSearch: 'Type: Publikationssøgning',
+    researcherNetwork: 'Type: Forskerprofil & netværk',
+    dataSecurity: 'Datasikkerhed',
+    dataSecurityDesc: 'Baseret på offentligt tilgængelige data fra KU Pure. Ingen automatisk data-indsamling af personlige oplysninger.',
+
+    // Footer
+    generatedBy: 'Genereret af Research Translator v4.0 - KU Lighthouse',
+    humanValidation: 'Human validation påkrævet før brug i møder',
+
+    // Export
+    preparingPDF: 'Forbereder PDF...',
+    popupBlocked: 'Popup blev blokeret. Tillad popups og prøv igen.',
+    printDialogOpened: 'Print dialog åbnet',
+    exportFailed: 'Eksport fejlede',
+    creatingWord: 'Opretter Word-dokument...',
+    wordDownloaded: 'Word-dokument downloaded',
+
+    // Errors
+    enterUrlOrName: 'Indtast venligst enten Pure URL eller forskerens fulde navn',
+    attemptingToFind: 'Forsøger at finde forsker...',
+    fetchingProfile: 'Henter profil...',
+    fetchingFromPure: 'Henter data fra Pure via proxy...',
+    analyzingProfile: 'Analyserer profil...',
+    generatingBriefing: 'Genererer briefing...',
+    couldNotFetch: 'Kunne ikke hente data. Prøv igen eller brug en anden URL.',
+    couldNotParse: 'Kunne ikke parse resultatet. URL\'en er muligvis ikke tilgængelig.',
+    analysisFailed: 'Analyse fejlede. Tjek at URL\'en er korrekt og tilgængelig.',
+
+    // Demo loading
+    loadingDemo: 'Loader demo...',
+    analyzing: 'Analyserer...',
+
+    // Misc
+    experimentalFeature: 'Søger på pure.ku.dk efter matchende forskere',
+    focus: 'Fokus',
+
+    // Button tooltips
+    printOrSaveAsPDF: 'Print eller gem som PDF',
+    downloadAsWord: 'Download som Word',
+
+    // Researcher selection (new)
+    selectResearcher: 'Vælg forsker',
+    multipleResultsFound: 'Vi fandt flere forskere der matcher din søgning',
+    selectCorrectResearcher: 'Vælg den rigtige forsker for at fortsætte',
+    searchingForResearcher: 'Søger efter forsker...',
+    parsingResults: 'Analyserer søgeresultater...',
+    noResultsFound: 'Ingen forskere fundet',
+    noResultsFoundDesc: 'Vi kunne ikke finde nogen forskere med det navn. Prøv at:',
+    noResultsTip1: 'Tjek stavningen af navnet',
+    noResultsTip2: 'Brug det fulde navn (fornavn og efternavn)',
+    noResultsTip3: 'Søg direkte på pure.ku.dk og brug URL-metoden',
+    searchAgain: 'Søg igen',
+    generateBriefingFor: 'Generer briefing'
+  },
+  en: {
+    // Header & general
+    title: 'Research Translator',
+    subtitle: 'From research language to business context',
+    publicDataOnly: 'Public data only',
+
+    // Input form
+    urlPlaceholder: 'Paste Pure URL here (e.g. https://pure.ku.dk/da/persons/123456)',
+    nameOptional: 'Or search by name',
+    namePlaceholder: 'E.g. Morten Axel Pedersen',
+    urlOptional: 'Pure URL (recommended)',
+    generateBriefing: '📊 Generate Briefing',
+    processing: 'Analyzing',
+
+    // Instructions
+    howTo: 'How to use this tool:',
+    step1: '1. Go to pure.ku.dk and find the researcher',
+    step2: '2. Copy URL from browser (Ctrl+L, Ctrl+C)',
+    step3: '3. Paste URL in the field below',
+    step4: '4. OR enter researcher\'s full name',
+    step5: '5. Click "Generate Briefing"',
+
+    // Tabs
+    tabs: {
+      who: 'Who are they?',
+      what: 'What do they research?',
+      publications: 'Publications',
+      applications: 'Applications',
+      questions: 'Questions',
+      sources: 'Sources'
+    },
+
+    // Buttons
+    backToSearch: 'New search',
+    exportPDF: 'Download PDF',
+    exportWord: 'Download Word',
+
+    // Warnings
+    warning: 'IMPORTANT: This tool only uses public data from KU Pure.',
+    doNotUpload: 'Do NOT upload POC applications or internal documents.',
+    verifyInfo: 'Always verify information',
+    verifyInfoDesc: 'AI-generated content may contain errors. Always check sources and factual information before use in meetings.',
+
+    // Demo
+    quickDemo: '⚡ Quick demo',
+    orText: 'OR TRY DEMO:',
+    orDivider: 'OR',
+
+    // Profile labels
+    background: 'Background',
+    teaching: 'Teaching',
+    primaryFocus: 'Primary Focus Area',
+    currentProjects: 'Current Projects',
+    collaborationNetwork: 'Collaboration Network',
+    frequentCoAuthors: 'Frequent co-authors:',
+    collaboratingInstitutions: 'Collaborating institutions:',
+    commercialPotential: 'Commercial potential:',
+
+    // Research tab
+    researchLanguageToBusinessContext: 'Research language translated to business context',
+    researchLanguage: 'Research language:',
+    translatedToYourLanguage: 'Translated to your language:',
+    whyItMatters: 'Why it matters',
+
+    // Publications tab
+    recentPublications: 'Recent Publications',
+    twoMostRecent: 'The 2 most recent publications',
+    noPublications: 'No publications available in this briefing.',
+
+    // Applications tab
+    whoAndHow: 'Who benefits from the research and how is it used?',
+    whoBenefits: 'Who benefits?',
+    howUsed: 'How is it used?',
+    impactAreas: 'Impact Areas',
+    keyStakeholders: 'Key Stakeholders',
+    marketAnalysis: 'Market Analysis',
+    competitors: 'Competitors:',
+    marketTrends: 'Market Trends:',
+    potentialPitfalls: 'Potential Pitfalls:',
+
+    // Questions tab
+    questionsSubtitle: '5 questions based on the researcher\'s specific methods and results',
+    whyAskThis: 'Why ask this:',
+
+    // Sources tab
+    primarySources: 'Primary sources for the briefing',
+    personProfile: 'Type: Person profile',
+    instituteWebsite: 'Type: Institute website',
+    publicationSearch: 'Type: Publication search',
+    researcherNetwork: 'Type: Researcher profile & network',
+    dataSecurity: 'Data Security',
+    dataSecurityDesc: 'Based on publicly available data from KU Pure. No automatic collection of personal information.',
+
+    // Footer
+    generatedBy: 'Generated by Research Translator v4.0 - KU Lighthouse',
+    humanValidation: 'Human validation required before use in meetings',
+
+    // Export
+    preparingPDF: 'Preparing PDF...',
+    popupBlocked: 'Popup blocked. Allow popups and try again.',
+    printDialogOpened: 'Print dialog opened',
+    exportFailed: 'Export failed',
+    creatingWord: 'Creating Word document...',
+    wordDownloaded: 'Word document downloaded',
+
+    // Errors
+    enterUrlOrName: 'Please enter either Pure URL or researcher\'s full name',
+    attemptingToFind: 'Attempting to find researcher...',
+    fetchingProfile: 'Fetching profile...',
+    fetchingFromPure: 'Fetching data from Pure via proxy...',
+    analyzingProfile: 'Analyzing profile...',
+    generatingBriefing: 'Generating briefing...',
+    couldNotFetch: 'Could not fetch data. Try again or use another URL.',
+    couldNotParse: 'Could not parse result. URL may not be accessible.',
+    analysisFailed: 'Analysis failed. Check that URL is correct and accessible.',
+
+    // Demo loading
+    loadingDemo: 'Loading demo...',
+    analyzing: 'Analyzing...',
+
+    // Misc
+    experimentalFeature: 'Searches pure.ku.dk for matching researchers',
+    focus: 'Focus',
+
+    // Button tooltips
+    printOrSaveAsPDF: 'Print or save as PDF',
+    downloadAsWord: 'Download as Word',
+
+    // Researcher selection (new)
+    selectResearcher: 'Select researcher',
+    multipleResultsFound: 'We found multiple researchers matching your search',
+    selectCorrectResearcher: 'Select the correct researcher to continue',
+    searchingForResearcher: 'Searching for researcher...',
+    parsingResults: 'Analyzing search results...',
+    noResultsFound: 'No researchers found',
+    noResultsFoundDesc: 'We could not find any researchers with that name. Try to:',
+    noResultsTip1: 'Check the spelling of the name',
+    noResultsTip2: 'Use the full name (first and last name)',
+    noResultsTip3: 'Search directly on pure.ku.dk and use the URL method',
+    searchAgain: 'Search again',
+    generateBriefingFor: 'Generate briefing'
+  }
+};
+
+// Cloudflare Worker proxy URL
+const PROXY_URL = 'https://ku-lighthouse-proxy.jescacherisevia.workers.dev';
+
+// Helper function to fetch KU Pure data through the proxy
+const fetchViaProxy = async (url) => {
+  const proxyUrl = `${PROXY_URL}/fetch?url=${encodeURIComponent(url)}`;
+  const response = await fetch(proxyUrl);
+  if (!response.ok) {
+    throw new Error(`Proxy fetch failed: ${response.status}`);
+  }
+  return response.text();
+};
+
+// Helper function to call Anthropic API through the proxy (API key is stored in Worker)
+const callAnthropicViaProxy = async (body) => {
+  const response = await fetch(`${PROXY_URL}/api/anthropic`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Anthropic API call failed: ${response.status} - ${errorText}`);
+  }
+  return response.json();
+};
+
 export default function ResearchTranslator() {
   const [lang, setLang] = useState('da');
-  const [state, setState] = useState('input');
+  const [state, setState] = useState('input'); // 'input' | 'processing' | 'selection' | 'briefing'
   const [inputUrl, setInputUrl] = useState('');
   const [inputName, setInputName] = useState('');
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState('');
+  const [searchResults, setSearchResults] = useState([]); // Array of researcher matches from name search
   const [selectedResearcher, setSelectedResearcher] = useState(null);
   const [activeTab, setActiveTab] = useState('who');
   const [error, setError] = useState('');
   const [exportStatus, setExportStatus] = useState('');
+
+  // Get translations for current language
+  const t = translations[lang];
 
   // Inject print styles on mount
   useEffect(() => {
@@ -49,75 +368,6 @@ export default function ResearchTranslator() {
       }
     };
   }, []);
-
-  const translations = {
-    da: {
-      title: 'Research Translator',
-      subtitle: 'Fra forskningssprog til forretningskontekst',
-      publicDataOnly: 'Kun offentlig data',
-      urlPlaceholder: 'Paste Pure URL her (f.eks. https://pure.ku.dk/da/persons/123456)',
-      nameOptional: 'Eller indtast fulde navn (eksperimentel)',
-      namePlaceholder: 'F.eks. Morten Axel Pedersen',
-      urlOptional: 'Pure URL (anbefalet)',
-      generateBriefing: '📊 Generer Briefing',
-      processing: 'Analyserer',
-      howTo: 'Sådan bruger du værktøjet:',
-      step1: '1. Gå til pure.ku.dk og find forskeren',
-      step2: '2. Kopier URL fra browser (Ctrl+L, Ctrl+C)',
-      step3: '3. Paste URL i feltet herunder',
-      step4: '4. ELLER indtast forskerens fulde navn',
-      step5: '5. Klik "Generer Briefing"',
-      tabs: {
-        who: 'Hvem er de?',
-        what: 'Hvad forsker de i?',
-        publications: 'Publikationer',
-        applications: 'Anvendelse',
-        questions: 'Spørgsmål',
-        sources: 'Kilder'
-      },
-      backToSearch: 'Ny søgning',
-      exportPDF: 'Download PDF',
-      exportWord: 'Download Word',
-      warning: 'VIGTIGT: Dette værktøj bruger kun offentlige data fra KU Pure.',
-      doNotUpload: 'Upload IKKE POC-ansøgninger eller interne dokumenter.',
-      quickDemo: '⚡ Quick demo',
-      orText: 'ELLER PRØV DEMO:'
-    },
-    en: {
-      title: 'Research Translator',
-      subtitle: 'From research language to business context',
-      publicDataOnly: 'Public data only',
-      urlPlaceholder: 'Paste Pure URL here (e.g. https://pure.ku.dk/da/persons/123456)',
-      nameOptional: 'Or enter full name (experimental)',
-      namePlaceholder: 'E.g. Morten Axel Pedersen',
-      urlOptional: 'Pure URL (recommended)',
-      generateBriefing: '📊 Generate Briefing',
-      processing: 'Analyzing',
-      howTo: 'How to use this tool:',
-      step1: '1. Go to pure.ku.dk and find the researcher',
-      step2: '2. Copy URL from browser (Ctrl+L, Ctrl+C)',
-      step3: '3. Paste URL in the field below',
-      step4: '4. OR enter researcher\'s full name',
-      step5: '5. Click "Generate Briefing"',
-      tabs: {
-        who: 'Who are they?',
-        what: 'What do they research?',
-        publications: 'Publications',
-        applications: 'Applications',
-        questions: 'Questions',
-        sources: 'Sources'
-      },
-      backToSearch: 'New search',
-      exportPDF: 'Download PDF',
-      exportWord: 'Download Word',
-      warning: 'IMPORTANT: This tool only uses public data from KU Pure.',
-      doNotUpload: 'Do NOT upload POC applications or internal documents.',
-      quickDemo: '⚡ Quick demo',
-      orText: 'OR TRY DEMO:'
-    }
-  };
-
-  const t = translations[lang];
 
   // Test data with collaboration and publications
   const testResearchers = {
@@ -313,6 +563,101 @@ export default function ResearchTranslator() {
     }
   };
 
+  // Search for researchers by name using Claude with web_search
+  const searchResearchers = async (name) => {
+    setState('processing');
+    setProgress(0);
+    setCurrentStep(t.searchingForResearcher);
+    setError('');
+
+    try {
+      setProgress(20);
+
+      // Use Claude to search Pure for researchers
+      const searchPrompt = `Search for researchers at University of Copenhagen (KU) on pure.ku.dk with the name "${name}".
+
+Your task:
+1. Search for this person on pure.ku.dk (Copenhagen University's research portal)
+2. Find ALL researchers whose names match or are similar to "${name}"
+3. For each match, extract: full name, academic title, institute/department, and their Pure profile URL
+
+Return ONLY a valid JSON array (no markdown, no explanation, just the array):
+[
+  {
+    "name": "Full Name",
+    "title": "Academic Title (e.g., Professor, Associate Professor, Postdoc)",
+    "institute": "Institute or Department name",
+    "pureUrl": "https://pure.ku.dk/... or https://researchprofiles.ku.dk/..."
+  }
+]
+
+If you find multiple people with similar names, include ALL of them (up to 7 results).
+If you find exactly one person, still return an array with that one result.
+If you find NO matches, return an empty array: []
+
+Remember: Return ONLY the JSON array, nothing else.`;
+
+      const searchData = await callClaudeWithTools([{
+        role: "user",
+        content: searchPrompt
+      }]);
+
+      setProgress(70);
+      setCurrentStep(t.parsingResults);
+
+      // Extract text from response
+      let responseText = '';
+      if (searchData.content) {
+        for (const block of searchData.content) {
+          if (block.type === 'text') {
+            responseText += block.text;
+          }
+        }
+      }
+
+      // Parse the JSON array from the response
+      let results = [];
+      try {
+        // Clean the response - remove markdown code blocks if present
+        let cleanText = responseText.trim();
+        cleanText = cleanText.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+
+        // Find the JSON array
+        const arrayMatch = cleanText.match(/\[[\s\S]*\]/);
+        if (arrayMatch) {
+          results = JSON.parse(arrayMatch[0]);
+        }
+      } catch (parseError) {
+        console.error('Failed to parse search results:', parseError);
+        results = [];
+      }
+
+      setProgress(100);
+
+      // Filter out any invalid results
+      results = results.filter(r => r.name && r.pureUrl);
+
+      if (results.length === 0) {
+        // No results found - show error state
+        setSearchResults([]);
+        setState('selection');
+      } else if (results.length === 1) {
+        // Single match - go directly to briefing
+        setSearchResults(results);
+        await generateBriefing(results[0].pureUrl);
+      } else {
+        // Multiple matches - show selection UI
+        setSearchResults(results);
+        setState('selection');
+      }
+
+    } catch (err) {
+      console.error('Search error:', err);
+      setError(t.analysisFailed);
+      setState('input');
+    }
+  };
+
   const startAnalysis = async (isDemo = false, demoName = '') => {
     setError('');
 
@@ -323,26 +668,20 @@ export default function ResearchTranslator() {
 
     // Check if there's input
     if (!inputUrl && !inputName) {
-      setError(lang === 'da'
-        ? 'Indtast venligst enten Pure URL eller forskerens fulde navn'
-        : 'Please enter either Pure URL or researcher\'s full name');
+      setError(t.enterUrlOrName);
       return;
     }
 
-    // If name is given, try to construct URL
-    let finalUrl = inputUrl;
-    if (!inputUrl && inputName) {
-      // Construct URL from name
-      const nameParts = inputName.toLowerCase().trim().split(' ');
-      const urlName = nameParts.join('-');
-      finalUrl = `https://pure.ku.dk/da/persons/${urlName}`;
-
-      setCurrentStep(lang === 'da'
-        ? 'Forsøger at finde forsker...'
-        : 'Attempting to find researcher...');
+    // If URL is provided, go directly to briefing generation
+    if (inputUrl) {
+      await generateBriefing(inputUrl);
+      return;
     }
 
-    await generateBriefing(finalUrl);
+    // If only name is provided, search for researchers first
+    if (inputName) {
+      await searchResearchers(inputName.trim());
+    }
   };
 
   const loadDemoData = (name) => {
@@ -350,9 +689,9 @@ export default function ResearchTranslator() {
     setProgress(0);
 
     const steps = [
-      lang === 'da' ? 'Loader demo...' : 'Loading demo...',
-      lang === 'da' ? 'Analyserer...' : 'Analyzing...',
-      lang === 'da' ? 'Genererer briefing...' : 'Generating briefing...'
+      t.loadingDemo,
+      t.analyzing,
+      t.generatingBriefing
     ];
 
     let stepIndex = 0;
@@ -371,24 +710,19 @@ export default function ResearchTranslator() {
   };
 
   // Multi-turn API call helper function with proper tool handling
+  // All API calls go through the Cloudflare Worker proxy (API key stored securely in Worker)
   const callClaudeWithTools = async (messages) => {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 8000,
-        tools: [
-          {
-            "type": "web_search_20250305",
-            "name": "web_search"
-          }
-        ],
-        messages: messages
-      })
+    const data = await callAnthropicViaProxy({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 8000,
+      tools: [
+        {
+          "type": "web_search_20250305",
+          "name": "web_search"
+        }
+      ],
+      messages: messages
     });
-
-    const data = await response.json();
 
     // Check if Claude is using tools (needs continuation)
     if (data.stop_reason === 'tool_use') {
@@ -427,16 +761,40 @@ export default function ResearchTranslator() {
   const generateBriefing = async (pureUrl) => {
     setState('processing');
     setProgress(0);
-    setCurrentStep(lang === 'da' ? 'Henter profil...' : 'Fetching profile...');
+    setCurrentStep(t.fetchingProfile);
 
     try {
       setProgress(20);
-      setCurrentStep(lang === 'da' ? 'Søger efter forsker...' : 'Searching for researcher...');
+      setCurrentStep(t.fetchingFromPure);
 
-      // Initial message that triggers web search
+      // Fetch Pure profile HTML through the Cloudflare Worker proxy
+      let pureHtmlContent = '';
+      try {
+        pureHtmlContent = await fetchViaProxy(pureUrl);
+        // Trim content to avoid token limits (keep first 50000 chars)
+        if (pureHtmlContent.length > 50000) {
+          pureHtmlContent = pureHtmlContent.substring(0, 50000) + '\n... [content truncated]';
+        }
+      } catch (proxyError) {
+        console.warn('Proxy fetch failed, falling back to web_search:', proxyError);
+        pureHtmlContent = null;
+      }
+
+      setProgress(40);
+      setCurrentStep(t.analyzingProfile);
+
+      // Build the initial message - use fetched content if available, otherwise fall back to web_search
       const initialMessages = [{
         role: "user",
-        content: `I need you to fetch and analyze a KU Copenhagen researcher profile.
+        content: pureHtmlContent
+          ? `I need you to analyze a KU Copenhagen researcher profile. Here is the HTML content from their Pure profile page (${pureUrl}):
+
+<pure_profile_html>
+${pureHtmlContent}
+</pure_profile_html>
+
+Please analyze this content and create a business briefing in ${lang === 'da' ? 'Danish' : 'English'}.`
+          : `I need you to fetch and analyze a KU Copenhagen researcher profile.
 
 Step 1: Use web_search to find and read this URL: ${pureUrl}
 
@@ -445,20 +803,25 @@ Step 2: After you have read the actual page content, analyze it and create a bus
 Start by searching for the URL now.`
       }];
 
-      setProgress(40);
-      setCurrentStep(lang === 'da' ? 'Henter data fra Pure...' : 'Fetching data from Pure...');
-
-      // First API call - this will trigger web_search
+      // First API call - analyze the content (or trigger web_search as fallback)
       const searchData = await callClaudeWithTools(initialMessages);
 
       setProgress(60);
-      setCurrentStep(lang === 'da' ? 'Analyserer forsker...' : 'Analyzing researcher...');
+      setCurrentStep(t.generatingBriefing);
 
       // Now ask Claude to generate the structured JSON based on what it found
       const analysisMessages = [
         {
           role: "user",
-          content: `I need you to fetch and analyze a KU Copenhagen researcher profile.
+          content: pureHtmlContent
+            ? `I need you to analyze a KU Copenhagen researcher profile. Here is the HTML content from their Pure profile page (${pureUrl}):
+
+<pure_profile_html>
+${pureHtmlContent}
+</pure_profile_html>
+
+Please analyze this content and create a business briefing in ${lang === 'da' ? 'Danish' : 'English'}.`
+            : `I need you to fetch and analyze a KU Copenhagen researcher profile.
 
 Step 1: Use web_search to find and read this URL: ${pureUrl}
 
@@ -547,7 +910,7 @@ Return ONLY the JSON, nothing else.`
       ];
 
       setProgress(70);
-      setCurrentStep(lang === 'da' ? 'Genererer briefing...' : 'Generating briefing...');
+      setCurrentStep(t.generatingBriefing);
 
       // Second API call to get structured JSON
       const analysisData = await callClaudeWithTools(analysisMessages);
@@ -563,9 +926,7 @@ Return ONLY the JSON, nothing else.`
       }
 
       if (!text) {
-        setError(lang === 'da'
-          ? 'Kunne ikke hente data. Prøv igen eller brug en anden URL.'
-          : 'Could not fetch data. Try again or use another URL.');
+        setError(t.couldNotFetch);
         setState('input');
         return;
       }
@@ -577,9 +938,7 @@ Return ONLY the JSON, nothing else.`
 
       const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
       if (!jsonMatch) {
-        setError(lang === 'da'
-          ? 'Kunne ikke parse resultatet. URL\'en er muligvis ikke tilgængelig.'
-          : 'Could not parse result. URL may not be accessible.');
+        setError(t.couldNotParse);
         setState('input');
         return;
       }
@@ -593,9 +952,7 @@ Return ONLY the JSON, nothing else.`
 
     } catch (err) {
       console.error('Analysis error:', err);
-      setError(lang === 'da'
-        ? 'Analyse fejlede. Tjek at URL\'en er korrekt og tilgængelig.'
-        : 'Analysis failed. Check that URL is correct and accessible.');
+      setError(t.analysisFailed);
       setState('input');
     }
   };
@@ -604,6 +961,7 @@ Return ONLY the JSON, nothing else.`
     setState('input');
     setInputUrl('');
     setInputName('');
+    setSearchResults([]);
     setSelectedResearcher(null);
     setActiveTab('who');
     setError('');
@@ -611,7 +969,7 @@ Return ONLY the JSON, nothing else.`
 
   const handleExportPDF = () => {
     try {
-      setExportStatus(lang === 'da' ? 'Forbereder PDF...' : 'Preparing PDF...');
+      setExportStatus(t.preparingPDF);
 
       const researcherData = selectedResearcher;
 
@@ -619,9 +977,7 @@ Return ONLY the JSON, nothing else.`
       const printWindow = window.open('', '_blank', 'width=800,height=600');
 
       if (!printWindow) {
-        setExportStatus(lang === 'da'
-          ? 'Popup blev blokeret. Tillad popups og prøv igen.'
-          : 'Popup blocked. Allow popups and try again.');
+        setExportStatus(t.popupBlocked);
         setTimeout(() => setExportStatus(''), 4000);
         return;
       }
@@ -742,20 +1098,20 @@ Return ONLY the JSON, nothing else.`
           <p class="subtitle"><strong>${researcherData.title}</strong> | ${researcherData.institute}</p>
 
           <div class="section">
-            <h2>${lang === 'da' ? 'Hvem er de?' : 'Who are they?'}</h2>
-            <p><span class="label">${lang === 'da' ? 'Baggrund:' : 'Background:'}</span><br>${researcherData.profile?.background || ''}</p>
-            <p><span class="label">${lang === 'da' ? 'Fokus:' : 'Focus:'}</span><br>${researcherData.profile?.focus || ''}</p>
+            <h2>${t.tabs.who}</h2>
+            <p><span class="label">${t.background}:</span><br>${researcherData.profile?.background || ''}</p>
+            <p><span class="label">${t.focus}:</span><br>${researcherData.profile?.focus || ''}</p>
           </div>
 
           <div class="section">
-            <h2>${lang === 'da' ? 'Hvad forsker de i?' : 'What do they research?'}</h2>
+            <h2>${t.tabs.what}</h2>
             <p>${researcherData.research?.translated || ''}</p>
-            <p><span class="label">${lang === 'da' ? 'Hvorfor det betyder noget:' : 'Why it matters:'}</span><br>${researcherData.research?.whyItMatters || ''}</p>
+            <p><span class="label">${t.whyItMatters}:</span><br>${researcherData.research?.whyItMatters || ''}</p>
           </div>
 
           ${researcherData.publications && researcherData.publications.length > 0 ? `
           <div class="section">
-            <h2>${lang === 'da' ? 'Seneste Publikationer' : 'Recent Publications'}</h2>
+            <h2>${t.recentPublications}</h2>
             ${researcherData.publications.slice(0, 2).map((pub, idx) => `
               <div class="publication">
                 <strong>${idx + 1}. ${pub.title}</strong> (${pub.year})
@@ -765,23 +1121,23 @@ Return ONLY the JSON, nothing else.`
           ` : ''}
 
           <div class="section">
-            <h2>${lang === 'da' ? 'Spørgsmål til mødet' : 'Questions for the meeting'}</h2>
+            <h2>${t.tabs.questions}</h2>
             ${researcherData.questions?.map((q, idx) => `
               <div class="question">
                 <span class="question-number">${idx + 1}</span>
                 <strong>${q.q}</strong>
-                <p style="font-size: 13px; color: #92400e; margin: 8px 0 0 34px;">${lang === 'da' ? 'Hvorfor:' : 'Why:'} ${q.why}</p>
+                <p style="font-size: 13px; color: #92400e; margin: 8px 0 0 34px;">${t.whyAskThis} ${q.why}</p>
               </div>
             `).join('') || ''}
           </div>
 
           <div class="section">
-            <h2>${lang === 'da' ? 'Kilder' : 'Sources'}</h2>
+            <h2>${t.tabs.sources}</h2>
             ${researcherData.pureUrl ? `<p>Pure Profil: <a href="${researcherData.pureUrl}">${researcherData.pureUrl}</a></p>` : ''}
           </div>
 
           <p class="footer">
-            ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generated by Research Translator - KU Lighthouse'}
+            ${t.generatedBy}
           </p>
         </body>
         </html>
@@ -798,18 +1154,18 @@ Return ONLY the JSON, nothing else.`
         }, 250);
       };
 
-      setExportStatus(lang === 'da' ? 'Print dialog åbnet' : 'Print dialog opened');
+      setExportStatus(t.printDialogOpened);
       setTimeout(() => setExportStatus(''), 3000);
     } catch (error) {
       console.error('Export error:', error);
-      setExportStatus(lang === 'da' ? 'Eksport fejlede' : 'Export failed');
+      setExportStatus(t.exportFailed);
       setTimeout(() => setExportStatus(''), 3000);
     }
   };
 
   const handleExportWord = () => {
     try {
-      setExportStatus(lang === 'da' ? 'Opretter Word-dokument...' : 'Creating Word document...');
+      setExportStatus(t.creatingWord);
 
       const researcherData = selectedResearcher;
 
@@ -845,20 +1201,20 @@ p { margin: 6pt 0; }
 <p><strong>${researcherData.title}</strong> | ${researcherData.institute}</p>
 
 <div class="section">
-<h2>${lang === 'da' ? 'Hvem er de?' : 'Who are they?'}</h2>
-<p><strong>${lang === 'da' ? 'Baggrund:' : 'Background:'}</strong> ${researcherData.profile?.background || ''}</p>
-<p><strong>${lang === 'da' ? 'Fokus:' : 'Focus:'}</strong> ${researcherData.profile?.focus || ''}</p>
+<h2>${t.tabs.who}</h2>
+<p><strong>${t.background}:</strong> ${researcherData.profile?.background || ''}</p>
+<p><strong>${t.focus}:</strong> ${researcherData.profile?.focus || ''}</p>
 </div>
 
 <div class="section">
-<h2>${lang === 'da' ? 'Hvad forsker de i?' : 'What do they research?'}</h2>
+<h2>${t.tabs.what}</h2>
 <p>${researcherData.research?.translated || ''}</p>
-<p><strong>${lang === 'da' ? 'Hvorfor det betyder noget:' : 'Why it matters:'}</strong> ${researcherData.research?.whyItMatters || ''}</p>
+<p><strong>${t.whyItMatters}:</strong> ${researcherData.research?.whyItMatters || ''}</p>
 </div>
 
 ${researcherData.publications && researcherData.publications.length > 0 ? `
 <div class="section">
-<h2>${lang === 'da' ? 'Seneste Publikationer' : 'Recent Publications'}</h2>
+<h2>${t.recentPublications}</h2>
 ${researcherData.publications.slice(0, 2).map((pub, idx) => `
 <div class="publication">
 <p><strong>${idx + 1}. ${pub.title}</strong> (${pub.year})</p>
@@ -868,22 +1224,22 @@ ${researcherData.publications.slice(0, 2).map((pub, idx) => `
 ` : ''}
 
 <div class="section">
-<h2>${lang === 'da' ? 'Spørgsmål til mødet' : 'Questions for the meeting'}</h2>
+<h2>${t.tabs.questions}</h2>
 ${researcherData.questions?.map((q, idx) => `
 <div class="question">
 <p><strong>${idx + 1}. ${q.q}</strong></p>
-<p style="color: #92400e; font-size: 10pt;">${lang === 'da' ? 'Hvorfor:' : 'Why:'} ${q.why}</p>
+<p style="color: #92400e; font-size: 10pt;">${t.whyAskThis} ${q.why}</p>
 </div>
 `).join('') || ''}
 </div>
 
 <div class="section">
-<h2>${lang === 'da' ? 'Kilder' : 'Sources'}</h2>
+<h2>${t.tabs.sources}</h2>
 ${researcherData.pureUrl ? `<p>Pure Profil: ${researcherData.pureUrl}</p>` : ''}
 </div>
 
 <p style="text-align: center; color: #666; margin-top: 24pt;">
-${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generated by Research Translator - KU Lighthouse'}
+${t.generatedBy}
 </p>
 </body>
 </html>`;
@@ -911,11 +1267,11 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
         URL.revokeObjectURL(url);
       }, 100);
 
-      setExportStatus(lang === 'da' ? 'Word-dokument downloaded' : 'Word document downloaded');
+      setExportStatus(t.wordDownloaded);
       setTimeout(() => setExportStatus(''), 3000);
     } catch (error) {
       console.error('Export error:', error);
-      setExportStatus(lang === 'da' ? 'Eksport fejlede' : 'Export failed');
+      setExportStatus(t.exportFailed);
       setTimeout(() => setExportStatus(''), 3000);
     }
   };
@@ -1012,7 +1368,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
             {/* OR Divider */}
             <div className="flex items-center gap-4 my-4">
               <div className="flex-1 border-t border-gray-300"></div>
-              <span className="text-gray-500 text-sm font-medium">ELLER</span>
+              <span className="text-gray-500 text-sm font-medium">{t.orDivider}</span>
               <div className="flex-1 border-t border-gray-300"></div>
             </div>
 
@@ -1030,9 +1386,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
               />
               <p className="text-xs text-gray-500 mt-1">
-                {lang === 'da'
-                  ? 'Eksperimentel funktion - URL er mere pålidelig'
-                  : 'Experimental feature - URL is more reliable'}
+                {t.experimentalFeature}
               </p>
             </div>
 
@@ -1098,6 +1452,117 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
     );
   }
 
+  // SELECTION STATE - Choose from multiple researcher matches
+  if (state === 'selection') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-50 p-6">
+        <div className="max-w-4xl mx-auto">
+          {/* Language selector */}
+          <div className="flex justify-end mb-4">
+            <div className="inline-flex bg-white rounded-lg border border-gray-200 p-1">
+              <button
+                onClick={() => setLang('da')}
+                className={`px-4 py-2 rounded text-sm font-medium transition-all ${
+                  lang === 'da' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Dansk
+              </button>
+              <button
+                onClick={() => setLang('en')}
+                className={`px-4 py-2 rounded text-sm font-medium transition-all ${
+                  lang === 'en' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                English
+              </button>
+            </div>
+          </div>
+
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4 shadow-lg">
+              <Users className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">{t.selectResearcher}</h1>
+            {searchResults.length > 0 ? (
+              <p className="text-lg text-gray-600">{t.multipleResultsFound}</p>
+            ) : (
+              <p className="text-lg text-gray-600">{t.noResultsFound}</p>
+            )}
+          </div>
+
+          {/* Results or No Results */}
+          {searchResults.length > 0 ? (
+            <>
+              <p className="text-center text-gray-500 mb-6">{t.selectCorrectResearcher}</p>
+
+              {/* Researcher cards */}
+              <div className="space-y-3 mb-8">
+                {searchResults.map((researcher, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => generateBriefing(researcher.pureUrl)}
+                    className="w-full p-5 text-left bg-white rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all shadow-sm hover:shadow-md group"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-700 mb-1">
+                          {researcher.name}
+                        </h3>
+                        <p className="text-sm text-gray-600 mb-2">
+                          {researcher.title && <span className="font-medium">{researcher.title}</span>}
+                          {researcher.title && researcher.institute && <span className="mx-2">•</span>}
+                          {researcher.institute && <span>{researcher.institute}</span>}
+                        </p>
+                        <p className="text-xs text-gray-400 truncate">
+                          {researcher.pureUrl}
+                        </p>
+                      </div>
+                      <div className="ml-4 flex-shrink-0">
+                        <div className="w-10 h-10 bg-blue-100 group-hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors">
+                          <ExternalLink className="w-5 h-5 text-blue-600 group-hover:text-white" />
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            /* No results found */
+            <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6 mb-8">
+              <div className="flex items-start gap-4">
+                <AlertCircle className="w-6 h-6 text-yellow-700 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-yellow-900 mb-2">{t.noResultsFoundDesc}</p>
+                  <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
+                    <li>{t.noResultsTip1}</li>
+                    <li>{t.noResultsTip2}</li>
+                    <li>{t.noResultsTip3}</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Back button */}
+          <div className="text-center">
+            <button
+              onClick={() => {
+                setState('input');
+                setSearchResults([]);
+              }}
+              className="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium rounded-lg transition-all"
+            >
+              ← {t.searchAgain}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // BRIEFING STATE
   if (state === 'briefing' && selectedResearcher) {
     const r = selectedResearcher;
@@ -1134,18 +1599,18 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                 <button
                   onClick={handleExportPDF}
                   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2"
-                  title={lang === 'da' ? 'Print eller gem som PDF' : 'Print or save as PDF'}
+                  title={t.printOrSaveAsPDF}
                 >
                   <FileText className="w-4 h-4" />
-                  {lang === 'da' ? 'PDF' : 'PDF'}
+                  PDF
                 </button>
                 <button
                   onClick={handleExportWord}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2"
-                  title={lang === 'da' ? 'Download som Word' : 'Download as Word'}
+                  title={t.downloadAsWord}
                 >
                   <FileText className="w-4 h-4" />
-                  {lang === 'da' ? 'Word' : 'Word'}
+                  Word
                 </button>
               </div>
             </div>
@@ -1158,12 +1623,10 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
             <AlertCircle className="w-5 h-5 text-yellow-700 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-sm font-semibold text-yellow-900 mb-1">
-                {lang === 'da' ? 'Verificer altid informationen' : 'Always verify information'}
+                {t.verifyInfo}
               </p>
               <p className="text-xs text-yellow-800">
-                {lang === 'da'
-                  ? 'AI-genereret indhold kan indeholde fejl. Tjek altid kilder og faktuelle oplysninger før brug i møder.'
-                  : 'AI-generated content may contain errors. Always check sources and factual information before use in meetings.'}
+                {t.verifyInfoDesc}
               </p>
             </div>
           </div>
@@ -1210,13 +1673,13 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
                         <div className="text-xs text-blue-700 uppercase mb-1 font-semibold">
-                          {lang === 'da' ? 'Baggrund' : 'Background'}
+                          {t.background}
                         </div>
                         <div className="text-sm text-gray-900">{r.profile.background}</div>
                       </div>
                       <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
                         <div className="text-xs text-purple-700 uppercase mb-1 font-semibold">
-                          {lang === 'da' ? 'Undervisning' : 'Teaching'}
+                          {t.teaching}
                         </div>
                         <div className="text-sm text-gray-900">{r.profile.teaching}</div>
                       </div>
@@ -1224,14 +1687,14 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
 
                     <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-6 border border-gray-200">
                       <h3 className="font-bold text-gray-900 mb-3">
-                        {lang === 'da' ? 'Primært Fokusområde' : 'Primary Focus Area'}
+                        {t.primaryFocus}
                       </h3>
                       <p className="text-gray-800 leading-relaxed">{r.profile.focus}</p>
                     </div>
 
                     <div className="bg-green-50 rounded-lg p-6 border border-green-200">
                       <h3 className="font-bold text-green-900 mb-3">
-                        {lang === 'da' ? 'Aktuelle Projekter' : 'Current Projects'}
+                        {t.currentProjects}
                       </h3>
                       <p className="text-green-800 leading-relaxed">{r.profile.currentProjects}</p>
                     </div>
@@ -1241,12 +1704,12 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                       <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
                         <h3 className="font-bold text-yellow-900 mb-4 flex items-center gap-2">
                           <Users className="w-5 h-5" />
-                          {lang === 'da' ? 'Samarbejdsnetværk' : 'Collaboration Network'}
+                          {t.collaborationNetwork}
                         </h3>
                         <div className="space-y-4">
                           <div>
                             <h4 className="text-sm font-semibold text-yellow-800 mb-2">
-                              {lang === 'da' ? 'Hyppige medforfattere:' : 'Frequent co-authors:'}
+                              {t.frequentCoAuthors}
                             </h4>
                             <div className="flex flex-wrap gap-2">
                               {r.collaboration.coAuthors.map((author, idx) => (
@@ -1258,7 +1721,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                           </div>
                           <div>
                             <h4 className="text-sm font-semibold text-yellow-800 mb-2">
-                              {lang === 'da' ? 'Samarbejdsinstitutioner:' : 'Collaborating institutions:'}
+                              {t.collaboratingInstitutions}
                             </h4>
                             <div className="flex flex-wrap gap-2">
                               {r.collaboration.institutions.map((inst, idx) => (
@@ -1271,7 +1734,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                           <div className="bg-white rounded-lg p-4 border border-yellow-300">
                             <h4 className="text-sm font-semibold text-yellow-800 mb-2 flex items-center gap-2">
                               <Lightbulb className="w-4 h-4" />
-                              {lang === 'da' ? 'Kommercielt potentiale:' : 'Commercial potential:'}
+                              {t.commercialPotential}
                             </h4>
                             <p className="text-sm text-yellow-900">{r.collaboration.commercialPotential}</p>
                           </div>
@@ -1286,13 +1749,13 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">{t.tabs.what}</h2>
                       <p className="text-gray-600">
-                        {lang === 'da' ? 'Forskningssprog oversat til forretningskontekst' : 'Research language translated to business context'}
+                        {t.researchLanguageToBusinessContext}
                       </p>
                     </div>
 
                     <div className="bg-gray-50 rounded-lg p-6 border-2 border-gray-300">
                       <h3 className="text-sm font-bold text-gray-500 uppercase mb-2">
-                        {lang === 'da' ? 'Forskningssprog:' : 'Research language:'}
+                        {t.researchLanguage}
                       </h3>
                       <p className="text-gray-700 italic font-mono text-sm">{r.research.technical}</p>
                     </div>
@@ -1303,7 +1766,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
 
                     <div className="bg-blue-50 rounded-lg p-6 border-2 border-blue-300">
                       <h3 className="text-sm font-bold text-blue-700 uppercase mb-2">
-                        {lang === 'da' ? 'Oversat til dit sprog:' : 'Translated to your language:'}
+                        {t.translatedToYourLanguage}
                       </h3>
                       <p className="text-blue-900 leading-relaxed">{r.research.translated}</p>
                     </div>
@@ -1311,7 +1774,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-300">
                       <h3 className="font-bold text-yellow-900 mb-3 flex items-center gap-2">
                         <AlertCircle className="w-5 h-5" />
-                        {lang === 'da' ? 'Hvorfor det betyder noget' : 'Why it matters'}
+                        {t.whyItMatters}
                       </h3>
                       <p className="text-yellow-800 leading-relaxed">{r.research.whyItMatters}</p>
                     </div>
@@ -1323,7 +1786,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">{t.tabs.publications}</h2>
                       <p className="text-gray-600">
-                        {lang === 'da' ? 'De 2 seneste publikationer' : 'The 2 most recent publications'}
+                        {t.twoMostRecent}
                       </p>
                     </div>
 
@@ -1350,9 +1813,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     ) : (
                       <div className="bg-gray-50 rounded-lg p-8 text-center border border-gray-200">
                         <p className="text-gray-600">
-                          {lang === 'da'
-                            ? 'Ingen publikationer tilgængelige i denne briefing.'
-                            : 'No publications available in this briefing.'}
+                          {t.noPublications}
                         </p>
                       </div>
                     )}
@@ -1364,14 +1825,14 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">{t.tabs.applications}</h2>
                       <p className="text-gray-600">
-                        {lang === 'da' ? 'Hvem har gavn af forskningen og hvordan bruges den?' : 'Who benefits from the research and how is it used?'}
+                        {t.whoAndHow}
                       </p>
                     </div>
 
                     <div>
                       <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <Users className="w-5 h-5 text-green-600" />
-                        {lang === 'da' ? 'Hvem har gavn?' : 'Who benefits?'}
+                        {t.whoBenefits}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {r.applications.beneficiaries.map((beneficiary, idx) => (
@@ -1385,7 +1846,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
                       <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
                         <Target className="w-5 h-5" />
-                        {lang === 'da' ? 'Hvordan bruges det?' : 'How is it used?'}
+                        {t.howUsed}
                       </h3>
                       <p className="text-blue-800 leading-relaxed">{r.applications.howUsed}</p>
                     </div>
@@ -1393,7 +1854,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div className="bg-yellow-50 rounded-lg p-6 border border-yellow-200">
                       <h3 className="font-bold text-yellow-900 mb-3 flex items-center gap-2">
                         <TrendingUp className="w-5 h-5" />
-                        {lang === 'da' ? 'Impact Områder' : 'Impact Areas'}
+                        {t.impactAreas}
                       </h3>
                       <p className="text-yellow-800 leading-relaxed">{r.applications.impactAreas}</p>
                     </div>
@@ -1401,7 +1862,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div>
                       <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <CheckCircle className="w-5 h-5 text-purple-600" />
-                        {lang === 'da' ? 'Nøgle Stakeholders' : 'Key Stakeholders'}
+                        {t.keyStakeholders}
                       </h3>
                       <div className="flex flex-wrap gap-2">
                         {r.applications.stakeholders.map((stakeholder, idx) => (
@@ -1417,13 +1878,13 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                       <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border-2 border-red-200">
                         <h3 className="font-bold text-red-900 mb-4 flex items-center gap-2 text-xl">
                           <AlertCircle className="w-6 h-6" />
-                          {lang === 'da' ? 'Markedsanalyse' : 'Market Analysis'}
+                          {t.marketAnalysis}
                         </h3>
                         <div className="space-y-4">
                           {r.applications.marketAnalysis.competitors && (
                             <div className="bg-white rounded-lg p-4 border border-red-200">
                               <h4 className="text-sm font-bold text-red-800 uppercase mb-2">
-                                {lang === 'da' ? 'Konkurrenter:' : 'Competitors:'}
+                                {t.competitors}
                               </h4>
                               <p className="text-sm text-gray-800">{r.applications.marketAnalysis.competitors}</p>
                             </div>
@@ -1432,7 +1893,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                           {r.applications.marketAnalysis.trends && (
                             <div className="bg-white rounded-lg p-4 border border-orange-200">
                               <h4 className="text-sm font-bold text-orange-800 uppercase mb-2">
-                                {lang === 'da' ? 'Markedstendenser:' : 'Market Trends:'}
+                                {t.marketTrends}
                               </h4>
                               <p className="text-sm text-gray-800">{r.applications.marketAnalysis.trends}</p>
                             </div>
@@ -1441,7 +1902,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                           {r.applications.marketAnalysis.barriers && (
                             <div className="bg-white rounded-lg p-4 border border-red-300">
                               <h4 className="text-sm font-bold text-red-800 uppercase mb-2">
-                                {lang === 'da' ? 'Potentielle Faldgruber:' : 'Potential Pitfalls:'}
+                                {t.potentialPitfalls}
                               </h4>
                               <p className="text-sm text-gray-800">{r.applications.marketAnalysis.barriers}</p>
                             </div>
@@ -1457,7 +1918,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">{t.tabs.questions}</h2>
                       <p className="text-gray-600">
-                        {lang === 'da' ? '5 spørgsmål baseret på forskerens specifikke metoder og resultater' : '5 questions based on the researcher\'s specific methods and results'}
+                        {t.questionsSubtitle}
                       </p>
                     </div>
 
@@ -1471,7 +1932,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                             <p className="text-lg font-bold text-gray-900 mb-3">{question.q}</p>
                             <div className="bg-white/60 rounded-lg p-3 border border-blue-200">
                               <p className="text-xs text-blue-700 uppercase font-semibold mb-1">
-                                {lang === 'da' ? 'Hvorfor stille dette:' : 'Why ask this:'}
+                                {t.whyAskThis}
                               </p>
                               <p className="text-sm text-gray-700">{question.why}</p>
                             </div>
@@ -1487,7 +1948,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div>
                       <h2 className="text-3xl font-bold text-gray-900 mb-4">{t.tabs.sources}</h2>
                       <p className="text-gray-600">
-                        {lang === 'da' ? 'Primære kilder til briefingen' : 'Primary sources for the briefing'}
+                        {t.primarySources}
                       </p>
                     </div>
 
@@ -1504,7 +1965,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                               [1] {r.name}'s Pure Profil
                             </div>
                             <div className="text-xs text-blue-700 mt-1">
-                              {lang === 'da' ? 'Type: Personprofil' : 'Type: Person profile'}
+                              {t.personProfile}
                             </div>
                           </div>
                           <ExternalLink className="w-5 h-5 text-blue-400 group-hover:text-blue-600" />
@@ -1523,7 +1984,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                               [2] {r.institute}
                             </div>
                             <div className="text-xs text-purple-700 mt-1">
-                              {lang === 'da' ? 'Type: Instituttets hjemmeside' : 'Type: Institute website'}
+                              {t.instituteWebsite}
                             </div>
                           </div>
                           <ExternalLink className="w-5 h-5 text-purple-400 group-hover:text-purple-600" />
@@ -1542,7 +2003,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                             [3] Google Scholar - {r.name}
                           </div>
                           <div className="text-xs text-green-700 mt-1">
-                            {lang === 'da' ? 'Type: Publikationssøgning' : 'Type: Publication search'}
+                            {t.publicationSearch}
                           </div>
                         </div>
                         <ExternalLink className="w-5 h-5 text-green-400 group-hover:text-green-600" />
@@ -1560,7 +2021,7 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                             [4] ResearchGate - {r.name}
                           </div>
                           <div className="text-xs text-teal-700 mt-1">
-                            {lang === 'da' ? 'Type: Forskerprofil & netværk' : 'Type: Researcher profile & network'}
+                            {t.researcherNetwork}
                           </div>
                         </div>
                         <ExternalLink className="w-5 h-5 text-teal-400 group-hover:text-teal-600" />
@@ -1570,12 +2031,10 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
                     <div className="bg-green-50 border border-green-200 rounded-lg p-6">
                       <h3 className="font-bold text-green-900 mb-2 flex items-center gap-2">
                         <CheckCircle className="w-5 h-5" />
-                        {lang === 'da' ? 'Datasikkerhed' : 'Data Security'}
+                        {t.dataSecurity}
                       </h3>
                       <p className="text-green-800 text-sm leading-relaxed">
-                        {lang === 'da'
-                          ? 'Baseret på offentligt tilgængelige data fra KU Pure. Ingen automatisk data-indsamling af personlige oplysninger.'
-                          : 'Based on publicly available data from KU Pure. No automatic collection of personal information.'}
+                        {t.dataSecurityDesc}
                       </p>
                     </div>
                   </div>
@@ -1589,15 +2048,11 @@ ${lang === 'da' ? 'Genereret af Research Translator - KU Lighthouse' : 'Generate
         <div className="bg-white border-t border-gray-200 mt-12 no-print">
           <div className="max-w-7xl mx-auto px-6 py-6 text-center text-sm text-gray-500">
             <p>
-              {lang === 'da'
-                ? 'Genereret af Research Translator v4.0 - KU Lighthouse'
-                : 'Generated by Research Translator v4.0 - KU Lighthouse'}
+              {t.generatedBy}
             </p>
             <p className="mt-1 flex items-center justify-center gap-2">
               <AlertCircle className="w-4 h-4 text-yellow-500" />
-              {lang === 'da'
-                ? 'Human validation påkrævet før brug i møder'
-                : 'Human validation required before use in meetings'}
+              {t.humanValidation}
             </p>
           </div>
         </div>
