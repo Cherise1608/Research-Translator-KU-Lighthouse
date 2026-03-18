@@ -1360,7 +1360,7 @@ ${t.generatedBy}
                 type="text"
                 value={inputUrl}
                 onChange={(e) => setInputUrl(e.target.value)}
-                placeholder={t.urlPlaceholder}
+                placeholder="Indtast URL (Kræves for præcision)"
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
               />
             </div>
@@ -1383,7 +1383,8 @@ ${t.generatedBy}
                 value={inputName}
                 onChange={(e) => setInputName(e.target.value)}
                 placeholder={t.namePlaceholder}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
+                disabled
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm bg-gray-100 cursor-not-allowed"
               />
               <p className="text-xs text-gray-500 mt-1">
                 {t.experimentalFeature}
