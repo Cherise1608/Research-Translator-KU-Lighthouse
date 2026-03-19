@@ -289,8 +289,8 @@ const translations = {
   }
 };
 
-// Cloudflare Worker proxy URL
-const PROXY_URL = 'https://ku-lighthouse-proxy.jescacherisevia.workers.dev';
+// Cloudflare Worker proxy URL — set via .env file: REACT_APP_PROXY_URL=https://your-worker.workers.dev
+const PROXY_URL = process.env.REACT_APP_PROXY_URL || 'http://localhost:8787';
 
 // Helper function to fetch KU Pure data through the proxy
 const fetchViaProxy = async (url) => {
