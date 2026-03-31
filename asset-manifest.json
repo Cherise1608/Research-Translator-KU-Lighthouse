@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Research-Translator-KU-Lighthouse/static/css/main.c4e2fc7d.css",
-    "main.js": "/Research-Translator-KU-Lighthouse/static/js/main.10c9e0b5.js",
+    "main.js": "/Research-Translator-KU-Lighthouse/static/js/main.afd2c7d3.js",
     "static/js/453.4d03026c.chunk.js": "/Research-Translator-KU-Lighthouse/static/js/453.4d03026c.chunk.js",
     "index.html": "/Research-Translator-KU-Lighthouse/index.html",
     "main.c4e2fc7d.css.map": "/Research-Translator-KU-Lighthouse/static/css/main.c4e2fc7d.css.map",
-    "main.10c9e0b5.js.map": "/Research-Translator-KU-Lighthouse/static/js/main.10c9e0b5.js.map",
+    "main.afd2c7d3.js.map": "/Research-Translator-KU-Lighthouse/static/js/main.afd2c7d3.js.map",
     "453.4d03026c.chunk.js.map": "/Research-Translator-KU-Lighthouse/static/js/453.4d03026c.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c4e2fc7d.css",
-    "static/js/main.10c9e0b5.js"
+    "static/js/main.afd2c7d3.js"
   ]
 }
