@@ -19,7 +19,7 @@ const translations = {
 
     // Instructions
     howTo: 'Sådan bruger du værktøjet:',
-    step1: '1. Indtast forskerens fulde navn',
+    step1: '1. Indtast forskerens fulde navn — eller find forskeren i ',
     step2: '2. Vælg den rigtige forsker fra listen (hvis flere matcher)',
     step3: '3. Klik "Generer Briefing"',
     step4: '',
@@ -161,7 +161,7 @@ const translations = {
 
     // Instructions
     howTo: 'How to use this tool:',
-    step1: '1. Enter the researcher\'s full name',
+    step1: '1. Enter the researcher\'s full name — or find the researcher in ',
     step2: '2. Select the correct researcher from the list (if multiple matches)',
     step3: '3. Click "Generate Briefing"',
     step4: '',
@@ -1320,7 +1320,7 @@ ${t.generatedBy}
               <div>
                 <p className="font-bold text-blue-900 mb-2">{t.howTo}</p>
                 <ol className="text-sm text-blue-800 space-y-1">
-                  <li>{t.step1}</li>
+                  <li>{t.step1}<a href="https://researchprofiles.ku.dk/da/persons/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">{lang === 'da' ? 'KU\'s forskerdatabase' : 'KU\'s researcher database'}</a></li>
                   <li>{t.step2}</li>
                   <li>{t.step3}</li>
                 </ol>
