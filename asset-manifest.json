@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Research-Translator-KU-Lighthouse/static/css/main.d95b1eb8.css",
-    "main.js": "/Research-Translator-KU-Lighthouse/static/js/main.fc525cef.js",
+    "main.css": "/Research-Translator-KU-Lighthouse/static/css/main.e156068c.css",
+    "main.js": "/Research-Translator-KU-Lighthouse/static/js/main.96ddec7d.js",
     "static/js/453.4d03026c.chunk.js": "/Research-Translator-KU-Lighthouse/static/js/453.4d03026c.chunk.js",
     "index.html": "/Research-Translator-KU-Lighthouse/index.html",
-    "main.d95b1eb8.css.map": "/Research-Translator-KU-Lighthouse/static/css/main.d95b1eb8.css.map",
-    "main.fc525cef.js.map": "/Research-Translator-KU-Lighthouse/static/js/main.fc525cef.js.map",
+    "main.e156068c.css.map": "/Research-Translator-KU-Lighthouse/static/css/main.e156068c.css.map",
+    "main.96ddec7d.js.map": "/Research-Translator-KU-Lighthouse/static/js/main.96ddec7d.js.map",
     "453.4d03026c.chunk.js.map": "/Research-Translator-KU-Lighthouse/static/js/453.4d03026c.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.d95b1eb8.css",
-    "static/js/main.fc525cef.js"
+    "static/css/main.e156068c.css",
+    "static/js/main.96ddec7d.js"
   ]
 }
