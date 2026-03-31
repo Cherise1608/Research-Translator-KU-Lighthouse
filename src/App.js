@@ -927,13 +927,15 @@ CRITICAL INSTRUCTIONS FOR QUESTIONS:
 6. Keep questions conversational (max 20 words) but specific
 
 CRITICAL INSTRUCTIONS FOR PUBLICATIONS:
-1. You MUST use web_search to find the researcher's publication list on researchprofiles.ku.dk/da/persons/[name]/publications/ — sort by MOST RECENT first
-2. Pick the 2 publications with the HIGHEST year (most recently published)
-3. Use the EXACT publication titles as they appear — do NOT paraphrase or summarize
-4. The year must be the actual publication year — do NOT guess
-5. Include a direct URL to each publication (from researchprofiles.ku.dk, Google Scholar, or ResearchGate)
-6. Set "source" to where the URL points: "researchprofiles.ku.dk", "Google Scholar", or "ResearchGate"
-7. If researchprofiles.ku.dk has no publication list, fall back to Google Scholar or ResearchGate
+1. You MUST use web_search to find the researcher's publications on Google Scholar OR ResearchGate — these are the ONLY allowed sources for publications
+2. Search Google Scholar first: site:scholar.google.com "[researcher name]"
+3. If not found on Scholar, search ResearchGate: site:researchgate.net "[researcher name]"
+4. Pick the 2 publications with the HIGHEST year (most recently published)
+5. Use the EXACT publication titles as they appear — do NOT paraphrase or summarize
+6. The year must be the actual publication year — do NOT guess
+7. The URL must link directly to the publication on Google Scholar or ResearchGate — no other sources
+8. Set "source" to "Google Scholar" or "ResearchGate" accordingly
+9. Do NOT use researchprofiles.ku.dk, Semantic Scholar, PubMed, or any other source for publications
 
 CRITICAL LANGUAGE INSTRUCTION:
 ALL text content in the JSON (background, focus, translated, whyItMatters, howUsed, questions, etc.) MUST be written in ${lang === 'da' ? 'Danish' : 'English'}. Only publication titles should remain in their original language.
