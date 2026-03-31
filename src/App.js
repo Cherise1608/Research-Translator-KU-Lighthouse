@@ -10,16 +10,16 @@ const translations = {
     publicDataOnly: 'Kun offentlig data',
 
     // Input form
-    urlPlaceholder: 'Paste Pure URL her (f.eks. https://pure.ku.dk/da/persons/123456)',
+    urlPlaceholder: 'Paste forsker-URL her (f.eks. https://researchprofiles.ku.dk/da/persons/...)',
     nameOptional: 'Eller søg efter navn',
     namePlaceholder: 'F.eks. Morten Axel Pedersen',
-    urlOptional: 'Pure URL (anbefalet)',
+    urlOptional: 'Forsker-URL (anbefalet)',
     generateBriefing: '📊 Generer Briefing',
     processing: 'Analyserer',
 
     // Instructions
     howTo: 'Sådan bruger du værktøjet:',
-    step1: '1. Gå til pure.ku.dk og find forskeren',
+    step1: '1. Find forskeren på researchprofiles.ku.dk',
     step2: '2. Kopier URL fra browser (Ctrl+L, Ctrl+C)',
     step3: '3. Paste URL i feltet herunder',
     step4: '4. ELLER indtast forskerens fulde navn',
@@ -124,7 +124,7 @@ const translations = {
     analyzing: 'Analyserer...',
 
     // Misc
-    experimentalFeature: 'Søger på pure.ku.dk efter matchende forskere',
+    experimentalFeature: 'Søger på researchprofiles.ku.dk efter matchende forskere',
     focus: 'Fokus',
 
     // Button tooltips
@@ -141,7 +141,7 @@ const translations = {
     noResultsFoundDesc: 'Vi kunne ikke finde nogen forskere med det navn. Prøv at:',
     noResultsTip1: 'Tjek stavningen af navnet',
     noResultsTip2: 'Brug det fulde navn (fornavn og efternavn)',
-    noResultsTip3: 'Søg direkte på pure.ku.dk og brug URL-metoden',
+    noResultsTip3: 'Søg direkte på researchprofiles.ku.dk og brug URL-metoden',
     searchAgain: 'Søg igen',
     generateBriefingFor: 'Generer briefing'
   },
@@ -152,16 +152,16 @@ const translations = {
     publicDataOnly: 'Public data only',
 
     // Input form
-    urlPlaceholder: 'Paste Pure URL here (e.g. https://pure.ku.dk/da/persons/123456)',
+    urlPlaceholder: 'Paste researcher URL here (e.g. https://researchprofiles.ku.dk/da/persons/...)',
     nameOptional: 'Or search by name',
     namePlaceholder: 'E.g. Morten Axel Pedersen',
-    urlOptional: 'Pure URL (recommended)',
+    urlOptional: 'Researcher URL (recommended)',
     generateBriefing: '📊 Generate Briefing',
     processing: 'Analyzing',
 
     // Instructions
     howTo: 'How to use this tool:',
-    step1: '1. Go to pure.ku.dk and find the researcher',
+    step1: '1. Find the researcher on researchprofiles.ku.dk',
     step2: '2. Copy URL from browser (Ctrl+L, Ctrl+C)',
     step3: '3. Paste URL in the field below',
     step4: '4. OR enter researcher\'s full name',
@@ -266,7 +266,7 @@ const translations = {
     analyzing: 'Analyzing...',
 
     // Misc
-    experimentalFeature: 'Searches pure.ku.dk for matching researchers',
+    experimentalFeature: 'Searches researchprofiles.ku.dk for matching researchers',
     focus: 'Focus',
 
     // Button tooltips
@@ -283,14 +283,14 @@ const translations = {
     noResultsFoundDesc: 'We could not find any researchers with that name. Try to:',
     noResultsTip1: 'Check the spelling of the name',
     noResultsTip2: 'Use the full name (first and last name)',
-    noResultsTip3: 'Search directly on pure.ku.dk and use the URL method',
+    noResultsTip3: 'Search directly on researchprofiles.ku.dk and use the URL method',
     searchAgain: 'Search again',
     generateBriefingFor: 'Generate briefing'
   }
 };
 
 // Cloudflare Worker proxy URL — set via .env file: REACT_APP_PROXY_URL=https://your-worker.workers.dev
-const PROXY_URL = process.env.REACT_APP_PROXY_URL || 'https://research-translator-ku-lighthouse.aneg.workers.dev/';
+const PROXY_URL = process.env.REACT_APP_PROXY_URL || 'https://research-translator-ku-lighthouse.jescacherisevia.workers.dev';
 
 // Helper function to fetch KU Pure data through the proxy
 const fetchViaProxy = async (url) => {
@@ -574,10 +574,10 @@ export default function ResearchTranslator() {
       setProgress(20);
 
       // Use Claude to search Pure for researchers
-      const searchPrompt = `Search for researchers at University of Copenhagen (KU) on pure.ku.dk with the name "${name}".
+      const searchPrompt = `Search for researchers at University of Copenhagen (KU) on researchprofiles.ku.dk with the name "${name}".
 
 Your task:
-1. Search for this person on pure.ku.dk (Copenhagen University's research portal)
+1. Search for this person on researchprofiles.ku.dk (Copenhagen University's research portal)
 2. Find ALL researchers whose names match or are similar to "${name}"
 3. For each match, extract: full name, academic title, institute/department, and their Pure profile URL
 
@@ -587,7 +587,7 @@ Return ONLY a valid JSON array (no markdown, no explanation, just the array):
     "name": "Full Name",
     "title": "Academic Title (e.g., Professor, Associate Professor, Postdoc)",
     "institute": "Institute or Department name",
-    "pureUrl": "https://pure.ku.dk/... or https://researchprofiles.ku.dk/..."
+    "pureUrl": "https://researchprofiles.ku.dk/... or https://researchprofiles.ku.dk/..."
   }
 ]
 
@@ -1282,8 +1282,8 @@ ${t.generatedBy}
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-blue-50 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-end mb-4">
-            <div style={{ display: 'none' }} className="inline-flex bg-white rounded-lg border border-gray-200 p-1">
-              <button style={{ display: 'none' }}
+            <div className="inline-flex bg-white rounded-lg border border-gray-200 p-1">
+              <button
                 onClick={() => setLang('da')}
                 className={`px-4 py-2 rounded text-sm font-medium transition-all ${
                   lang === 'da' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
@@ -1291,7 +1291,7 @@ ${t.generatedBy}
               >
                 Dansk
               </button>
-              <button style={{ display: 'none' }}
+              <button
                 onClick={() => setLang('en')}
                 className={`px-4 py-2 rounded text-sm font-medium transition-all ${
                   lang === 'en' ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-gray-900'
@@ -1320,7 +1320,7 @@ ${t.generatedBy}
               <div>
                 <p className="font-bold text-blue-900 mb-2">{t.howTo}</p>
                 <ol className="text-sm text-blue-800 space-y-1">
-                  <li>{t.step1}</li>
+                  <li>{t.step1.split('researchprofiles.ku.dk')[0]}<a href="https://researchprofiles.ku.dk/da/persons/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">researchprofiles.ku.dk</a></li>
                   <li>{t.step2}</li>
                   <li>{t.step3}</li>
                   <li>{t.step4}</li>
@@ -1330,15 +1330,6 @@ ${t.generatedBy}
             </div>
           </div>
 
-          <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6 mb-6">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-6 h-6 text-yellow-700 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-bold text-yellow-900 mb-1">{t.warning}</p>
-                <p className="text-sm text-yellow-800">{t.doNotUpload}</p>
-              </div>
-            </div>
-          </div>
 
           {error && (
             <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 mb-6">
@@ -1383,8 +1374,7 @@ ${t.generatedBy}
                 value={inputName}
                 onChange={(e) => setInputName(e.target.value)}
                 placeholder={t.namePlaceholder}
-                disabled
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm bg-gray-100 cursor-not-allowed"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
               />
               <p className="text-xs text-gray-500 mt-1">
                 {t.experimentalFeature}
@@ -1591,12 +1581,6 @@ ${t.generatedBy}
                     <span>{exportStatus}</span>
                   </div>
                 )}
-                <button
-                  onClick={() => setLang(lang === 'da' ? 'en' : 'da')}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-all"
-                >
-                  {lang === 'da' ? 'English' : 'Dansk'}
-                </button>
                 <button
                   onClick={handleExportPDF}
                   className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2"
