@@ -27,8 +27,8 @@ const translations = {
 
     // Tabs
     tabs: {
-      who: 'Hvem er de?',
-      what: 'Hvad forsker de i?',
+      who: 'Hvem er forskeren?',
+      what: 'Hvad forskes der i?',
       publications: 'Publikationer',
       applications: 'Anvendelse',
       questions: 'Spørgsmål',
@@ -881,12 +881,12 @@ Return ONLY valid JSON (no markdown, no backticks):
   },
   "publications": [
     {
-      "title": "Title of first/most recent publication",
-      "year": 2024
+      "title": "EXACT title of the researcher's most recently published publication",
+      "year": 2025
     },
     {
-      "title": "Title of second most recent publication",
-      "year": 2023
+      "title": "EXACT title of the researcher's second most recently published publication",
+      "year": 2025
     }
   ],
   "research": {
@@ -923,9 +923,14 @@ CRITICAL INSTRUCTIONS FOR QUESTIONS:
 6. Keep questions conversational (max 20 words) but specific
 
 CRITICAL INSTRUCTIONS FOR PUBLICATIONS:
-1. Only include the 2 most recent publications
-2. Only include title and year - no links, no analysis, no co-authors
-3. Publications will be displayed as static text only
+1. You MUST find the 2 most RECENTLY published publications by this researcher — sorted by year descending. Use the publication list from their profile page or use web_search to find their latest publications on researchprofiles.ku.dk
+2. Use the EXACT publication titles as they appear on the researcher's profile — do NOT paraphrase or summarize titles
+3. The year must be the actual publication year — do NOT guess
+4. Only include title and year - no links, no analysis, no co-authors
+5. If you cannot verify the exact publications, use web_search to check researchprofiles.ku.dk/da/persons/[name]/publications/
+
+CRITICAL LANGUAGE INSTRUCTION:
+ALL text content in the JSON (background, focus, translated, whyItMatters, howUsed, questions, etc.) MUST be written in ${lang === 'da' ? 'Danish' : 'English'}. Only publication titles should remain in their original language.
 
 Return ONLY the JSON, nothing else.`
         }
