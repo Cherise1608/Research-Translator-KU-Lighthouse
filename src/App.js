@@ -882,11 +882,15 @@ Return ONLY valid JSON (no markdown, no backticks):
   "publications": [
     {
       "title": "EXACT title of the researcher's most recently published publication",
-      "year": 2025
+      "year": 2025,
+      "url": "Direct URL to the publication (from researchprofiles.ku.dk, Google Scholar, or ResearchGate)",
+      "source": "researchprofiles.ku.dk | Google Scholar | ResearchGate"
     },
     {
       "title": "EXACT title of the researcher's second most recently published publication",
-      "year": 2025
+      "year": 2025,
+      "url": "Direct URL to the publication",
+      "source": "researchprofiles.ku.dk | Google Scholar | ResearchGate"
     }
   ],
   "research": {
@@ -923,11 +927,13 @@ CRITICAL INSTRUCTIONS FOR QUESTIONS:
 6. Keep questions conversational (max 20 words) but specific
 
 CRITICAL INSTRUCTIONS FOR PUBLICATIONS:
-1. You MUST find the 2 most RECENTLY published publications by this researcher — sorted by year descending. Use the publication list from their profile page or use web_search to find their latest publications on researchprofiles.ku.dk
-2. Use the EXACT publication titles as they appear on the researcher's profile — do NOT paraphrase or summarize titles
-3. The year must be the actual publication year — do NOT guess
-4. Only include title and year - no links, no analysis, no co-authors
-5. If you cannot verify the exact publications, use web_search to check researchprofiles.ku.dk/da/persons/[name]/publications/
+1. You MUST use web_search to find the researcher's publication list on researchprofiles.ku.dk/da/persons/[name]/publications/ — sort by MOST RECENT first
+2. Pick the 2 publications with the HIGHEST year (most recently published)
+3. Use the EXACT publication titles as they appear — do NOT paraphrase or summarize
+4. The year must be the actual publication year — do NOT guess
+5. Include a direct URL to each publication (from researchprofiles.ku.dk, Google Scholar, or ResearchGate)
+6. Set "source" to where the URL points: "researchprofiles.ku.dk", "Google Scholar", or "ResearchGate"
+7. If researchprofiles.ku.dk has no publication list, fall back to Google Scholar or ResearchGate
 
 CRITICAL LANGUAGE INSTRUCTION:
 ALL text content in the JSON (background, focus, translated, whyItMatters, howUsed, questions, etc.) MUST be written in ${lang === 'da' ? 'Danish' : 'English'}. Only publication titles should remain in their original language.
@@ -1792,11 +1798,20 @@ ${t.generatedBy}
                               </div>
                               <div className="flex-1">
                                 <div className="flex items-start justify-between mb-2">
-                                  <h3 className="text-lg font-bold text-indigo-900">{pub.title}</h3>
+                                  {pub.url ? (
+                                    <a href={pub.url} target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-indigo-900 hover:text-indigo-600 underline decoration-indigo-300 hover:decoration-indigo-600 transition-colors">
+                                      {pub.title}
+                                    </a>
+                                  ) : (
+                                    <h3 className="text-lg font-bold text-indigo-900">{pub.title}</h3>
+                                  )}
                                   <span className="text-sm font-semibold text-indigo-700 bg-white px-3 py-1 rounded-full ml-4 flex-shrink-0">
                                     {pub.year}
                                   </span>
                                 </div>
+                                {pub.source && (
+                                  <p className="text-xs text-indigo-500 mt-1">{lang === 'da' ? 'Kilde' : 'Source'}: {pub.source}</p>
+                                )}
                               </div>
                             </div>
                           </div>
