@@ -10,20 +10,20 @@ const translations = {
     publicDataOnly: 'Kun offentlig data',
 
     // Input form
-    urlPlaceholder: 'Paste forsker-URL her (f.eks. https://researchprofiles.ku.dk/da/persons/...)',
-    nameOptional: 'Eller søg efter navn',
+    urlPlaceholder: 'F.eks. https://researchprofiles.ku.dk/da/persons/...',
+    nameOptional: 'Forskerens navn',
     namePlaceholder: 'F.eks. Morten Axel Pedersen',
-    urlOptional: 'Forsker-URL (anbefalet)',
+    urlOptional: 'Eller indsæt profil-URL direkte',
     generateBriefing: '📊 Generer Briefing',
     processing: 'Analyserer',
 
     // Instructions
     howTo: 'Sådan bruger du værktøjet:',
-    step1: '1. Find forskeren på researchprofiles.ku.dk',
-    step2: '2. Kopier URL fra browser (Ctrl+L, Ctrl+C)',
-    step3: '3. Paste URL i feltet herunder',
-    step4: '4. ELLER indtast forskerens fulde navn',
-    step5: '5. Klik "Generer Briefing"',
+    step1: '1. Indtast forskerens fulde navn',
+    step2: '2. Vælg den rigtige forsker fra listen (hvis flere matcher)',
+    step3: '3. Klik "Generer Briefing"',
+    step4: '',
+    step5: '',
 
     // Tabs
     tabs: {
@@ -152,20 +152,20 @@ const translations = {
     publicDataOnly: 'Public data only',
 
     // Input form
-    urlPlaceholder: 'Paste researcher URL here (e.g. https://researchprofiles.ku.dk/da/persons/...)',
-    nameOptional: 'Or search by name',
+    urlPlaceholder: 'E.g. https://researchprofiles.ku.dk/da/persons/...',
+    nameOptional: 'Researcher name',
     namePlaceholder: 'E.g. Morten Axel Pedersen',
-    urlOptional: 'Researcher URL (recommended)',
+    urlOptional: 'Or paste profile URL directly',
     generateBriefing: '📊 Generate Briefing',
     processing: 'Analyzing',
 
     // Instructions
     howTo: 'How to use this tool:',
-    step1: '1. Find the researcher on researchprofiles.ku.dk',
-    step2: '2. Copy URL from browser (Ctrl+L, Ctrl+C)',
-    step3: '3. Paste URL in the field below',
-    step4: '4. OR enter researcher\'s full name',
-    step5: '5. Click "Generate Briefing"',
+    step1: '1. Enter the researcher\'s full name',
+    step2: '2. Select the correct researcher from the list (if multiple matches)',
+    step3: '3. Click "Generate Briefing"',
+    step4: '',
+    step5: '',
 
     // Tabs
     tabs: {
@@ -1320,11 +1320,9 @@ ${t.generatedBy}
               <div>
                 <p className="font-bold text-blue-900 mb-2">{t.howTo}</p>
                 <ol className="text-sm text-blue-800 space-y-1">
-                  <li>{t.step1.split('researchprofiles.ku.dk')[0]}<a href="https://researchprofiles.ku.dk/da/persons/" target="_blank" rel="noopener noreferrer" className="underline font-semibold">researchprofiles.ku.dk</a></li>
+                  <li>{t.step1}</li>
                   <li>{t.step2}</li>
                   <li>{t.step3}</li>
-                  <li>{t.step4}</li>
-                  <li>{t.step5}</li>
                 </ol>
               </div>
             </div>
@@ -1341,29 +1339,7 @@ ${t.generatedBy}
           )}
 
           <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 mb-6">
-            {/* URL Input */}
-            <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                <ExternalLink className="w-4 h-4" />
-                {t.urlOptional}
-              </label>
-              <input
-                type="text"
-                value={inputUrl}
-                onChange={(e) => setInputUrl(e.target.value)}
-                placeholder="Indtast URL (Kræves for præcision)"
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
-              />
-            </div>
-
-            {/* OR Divider */}
-            <div className="flex items-center gap-4 my-4">
-              <div className="flex-1 border-t border-gray-300"></div>
-              <span className="text-gray-500 text-sm font-medium">{t.orDivider}</span>
-              <div className="flex-1 border-t border-gray-300"></div>
-            </div>
-
-            {/* Name Input */}
+            {/* Name Input (primary) */}
             <div className="mb-4">
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <User className="w-4 h-4" />
@@ -1376,9 +1352,28 @@ ${t.generatedBy}
                 placeholder={t.namePlaceholder}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
               />
-              <p className="text-xs text-gray-500 mt-1">
-                {t.experimentalFeature}
-              </p>
+            </div>
+
+            {/* OR Divider */}
+            <div className="flex items-center gap-4 my-4">
+              <div className="flex-1 border-t border-gray-300"></div>
+              <span className="text-gray-500 text-sm font-medium">{t.orDivider}</span>
+              <div className="flex-1 border-t border-gray-300"></div>
+            </div>
+
+            {/* URL Input (secondary) */}
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <ExternalLink className="w-4 h-4" />
+                {t.urlOptional}
+              </label>
+              <input
+                type="text"
+                value={inputUrl}
+                onChange={(e) => setInputUrl(e.target.value)}
+                placeholder={t.urlPlaceholder}
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue-500 transition-all text-sm"
+              />
             </div>
 
             <div className="mt-4 flex items-center justify-end">
