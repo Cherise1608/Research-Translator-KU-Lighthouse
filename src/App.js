@@ -303,17 +303,25 @@ const fetchViaProxy = async (url) => {
 };
 
 // Helper function to call Anthropic API through the proxy (API key is stored in Worker)
-const callAnthropicViaProxy = async (body) => {
-  const response = await fetch(`${PROXY_URL}/api/anthropic`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Anthropic API call failed: ${response.status} - ${errorText}`);
+// Automatically retries on rate limit (429) with increasing delays
+const callAnthropicViaProxy = async (body, retries = 3) => {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    const response = await fetch(`${PROXY_URL}/api/anthropic`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (response.status === 429 && attempt < retries) {
+      const delay = (attempt + 1) * 30000; // 30s, 60s, 90s
+      await new Promise(r => setTimeout(r, delay));
+      continue;
+    }
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Anthropic API call failed: ${response.status} - ${errorText}`);
+    }
+    return response.json();
   }
-  return response.json();
 };
 
 export default function ResearchTranslator() {
@@ -600,7 +608,7 @@ Remember: Return ONLY the JSON array, nothing else.`;
       const searchData = await callClaudeWithTools([{
         role: "user",
         content: searchPrompt
-      }]);
+      }], "claude-haiku-4-5-20251001", 2000);
 
       setProgress(70);
       setCurrentStep(t.parsingResults);
@@ -711,10 +719,10 @@ Remember: Return ONLY the JSON array, nothing else.`;
 
   // Multi-turn API call helper function with proper tool handling
   // All API calls go through the Cloudflare Worker proxy (API key stored securely in Worker)
-  const callClaudeWithTools = async (messages) => {
+  const callClaudeWithTools = async (messages, model = "claude-sonnet-4-20250514", maxTokens = 8000) => {
     const data = await callAnthropicViaProxy({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 8000,
+      model: model,
+      max_tokens: maxTokens,
       tools: [
         {
           "type": "web_search_20250305",
@@ -758,6 +766,19 @@ Remember: Return ONLY the JSON array, nothing else.`;
     return data;
   };
 
+  // Strip HTML to extract only meaningful text content
+  const stripHtml = (html) => {
+    // Remove script, style, svg, noscript tags and their content
+    let text = html.replace(/<(script|style|svg|noscript|header|footer|nav)[^>]*>[\s\S]*?<\/\1>/gi, '');
+    // Remove all HTML tags
+    text = text.replace(/<[^>]+>/g, ' ');
+    // Decode common HTML entities
+    text = text.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ');
+    // Collapse whitespace
+    text = text.replace(/\s+/g, ' ').trim();
+    return text;
+  };
+
   const generateBriefing = async (pureUrl) => {
     setState('processing');
     setProgress(0);
@@ -770,10 +791,11 @@ Remember: Return ONLY the JSON array, nothing else.`;
       // Fetch Pure profile HTML through the Cloudflare Worker proxy
       let pureHtmlContent = '';
       try {
-        pureHtmlContent = await fetchViaProxy(pureUrl);
-        // Trim content to avoid token limits (keep first 50000 chars)
-        if (pureHtmlContent.length > 50000) {
-          pureHtmlContent = pureHtmlContent.substring(0, 50000) + '\n... [content truncated]';
+        const rawHtml = await fetchViaProxy(pureUrl);
+        // Strip HTML to plain text and limit to 10000 chars to stay within token limits
+        pureHtmlContent = stripHtml(rawHtml);
+        if (pureHtmlContent.length > 10000) {
+          pureHtmlContent = pureHtmlContent.substring(0, 10000) + '\n... [content truncated]';
         }
       } catch (proxyError) {
         console.warn('Proxy fetch failed, falling back to web_search:', proxyError);
@@ -787,11 +809,11 @@ Remember: Return ONLY the JSON array, nothing else.`;
       const initialMessages = [{
         role: "user",
         content: pureHtmlContent
-          ? `I need you to analyze a KU Copenhagen researcher profile. Here is the HTML content from their Pure profile page (${pureUrl}):
+          ? `I need you to analyze a KU Copenhagen researcher profile. Here is the text content from their research profile page (${pureUrl}):
 
-<pure_profile_html>
+<profile_text>
 ${pureHtmlContent}
-</pure_profile_html>
+</profile_text>
 
 Please analyze this content and create a business briefing in ${lang === 'da' ? 'Danish' : 'English'}.`
           : `I need you to fetch and analyze a KU Copenhagen researcher profile.
@@ -814,11 +836,11 @@ Start by searching for the URL now.`
         {
           role: "user",
           content: pureHtmlContent
-            ? `I need you to analyze a KU Copenhagen researcher profile. Here is the HTML content from their Pure profile page (${pureUrl}):
+            ? `I need you to analyze a KU Copenhagen researcher profile. Here is the text content from their research profile page (${pureUrl}):
 
-<pure_profile_html>
+<profile_text>
 ${pureHtmlContent}
-</pure_profile_html>
+</profile_text>
 
 Please analyze this content and create a business briefing in ${lang === 'da' ? 'Danish' : 'English'}.`
             : `I need you to fetch and analyze a KU Copenhagen researcher profile.
