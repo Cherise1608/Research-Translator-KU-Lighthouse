@@ -290,7 +290,7 @@ const translations = {
 };
 
 // Cloudflare Worker proxy URL — set via .env file: REACT_APP_PROXY_URL=https://your-worker.workers.dev
-const PROXY_URL = process.env.REACT_APP_PROXY_URL || 'https://research-translator-ku-lighthouse.aneg.workers.dev';
+const PROXY_URL = process.env.REACT_APP_PROXY_URL || 'https://research-translator-ku-lighthouse.jescacherisevia.workers.dev';
 
 // Helper function to fetch KU Research Profiles data through the proxy
 const fetchViaProxy = async (url) => {
@@ -377,196 +377,97 @@ export default function ResearchTranslator() {
     };
   }, []);
 
-  // Test data with collaboration and publications
+  // Demo data — fictional researcher (no real person)
   const testResearchers = {
-    'morten': {
-      id: 'morten_pedersen',
-      name: 'Morten Axel Pedersen',
-      title: 'Professor',
-      institute: 'Institut for Antropologi & SODAS',
-      field: 'Computational Anthropology & Social Data Science',
-      pureUrl: 'https://researchprofiles.ku.dk/en/persons/morten-axel-pedersen/',
-      instituteUrl: 'https://anthropology.ku.dk',
+    'demo': {
+      id: 'demo_researcher',
+      name: 'Marie Eksempel',
+      title: lang === 'da' ? 'Lektor' : 'Associate Professor',
+      institute: lang === 'da' ? 'Institut for Datalogi' : 'Department of Computer Science',
+      field: lang === 'da' ? 'Ansvarlig AI & Maskinlæring' : 'Responsible AI & Machine Learning',
+      pureUrl: '',
+      instituteUrl: 'https://di.ku.dk',
       profile: {
         background: lang === 'da'
-          ? 'Dansk antropolog, PhD fra University of Cambridge. Medstifter og tidligere direktør for Copenhagen Centre for Social Data Science (SODAS).'
-          : 'Danish anthropologist, PhD from University of Cambridge. Co-founder and former director of Copenhagen Centre for Social Data Science (SODAS).',
+          ? 'Lektor ved Københavns Universitet siden 2019. PhD fra ETH Zürich. Tidligere forsker hos Google DeepMind.'
+          : 'Associate Professor at University of Copenhagen since 2019. PhD from ETH Zürich. Former researcher at Google DeepMind.',
         focus: lang === 'da'
-          ? 'Kombinerer langtids-etnografisk feltarbejde i Asien og Europa med mixed digital methods og computational etnografi. Forsker i forholdet mellem politiske former og kulturelle forestillinger.'
-          : 'Combines long-term ethnographic fieldwork in Asia and Europe with mixed digital methods and computational ethnography. Researches the relationship between political forms and cultural imaginaries.',
+          ? 'Forsker i fairness og gennemsigtighed i AI-systemer. Udvikler metoder til at opdage og reducere bias i maskinlæringsmodeller.'
+          : 'Researches fairness and transparency in AI systems. Develops methods to detect and reduce bias in machine learning models.',
         currentProjects: lang === 'da'
-          ? 'PI på ERC Advanced Grant "The Political Economy of Attention". Har tidligere modtaget Sapere Aude forskningsleder-bevilling fra DFF.'
-          : 'PI on ERC Advanced Grant "The Political Economy of Attention". Previously received Sapere Aude research leader grant from DFF.',
+          ? 'PI på Villum-projekt "Transparent AI for Public Services" (2024-2028). Deltager i EU Horizon-projekt om AI-regulering.'
+          : 'PI on Villum project "Transparent AI for Public Services" (2024-2028). Participant in EU Horizon project on AI regulation.',
         teaching: lang === 'da'
-          ? 'Social Antropologi, Social Data Science'
-          : 'Social Anthropology, Social Data Science'
+          ? 'Maskinlæring, AI Etik, Data Science'
+          : 'Machine Learning, AI Ethics, Data Science'
       },
       collaboration: {
-        coAuthors: lang === 'da'
-          ? ['Rane Willerslev (National Museum)', 'Anders Blok (KU Sociologi)', 'Brit Ross Winthereik (IT University)']
-          : ['Rane Willerslev (National Museum)', 'Anders Blok (KU Sociology)', 'Brit Ross Winthereik (IT University)'],
-        institutions: lang === 'da'
-          ? ['SODAS (KU)', 'Max Planck Institute', 'Cambridge University', 'National Museum of Denmark']
-          : ['SODAS (KU)', 'Max Planck Institute', 'Cambridge University', 'National Museum of Denmark'],
+        coAuthors: ['Henrik Nielsen (DTU)', 'Sofia Garcia (ETH Zürich)', 'James Chen (Oxford)'],
+        institutions: ['ETH Zürich', 'Oxford Internet Institute', 'DTU Compute', 'Google DeepMind'],
         commercialPotential: lang === 'da'
-          ? 'Tværfagligt netværk mellem antropologi, sociologi og data science skaber mulighed for konsulentvirksomhed inden for digital etnografi til tech-industrien.'
-          : 'Interdisciplinary network between anthropology, sociology and data science creates opportunity for consultancy in digital ethnography for tech industry.'
+          ? 'Stærkt netværk mellem akademia og tech-industri. Metoder til bias-detektion er direkte anvendelige for virksomheder der skal overholde EU AI Act.'
+          : 'Strong network between academia and tech industry. Bias detection methods directly applicable for companies needing to comply with EU AI Act.'
       },
       publications: [
         {
-          title: lang === 'da'
-            ? 'The Political Economy of Attention in the Age of Social Media'
-            : 'The Political Economy of Attention in the Age of Social Media',
-          year: 2024
+          title: 'Fairness Metrics for Multi-Stakeholder AI Systems: A Comparative Framework',
+          year: 2025,
+          url: '',
+          source: 'Google Scholar'
         },
         {
-          title: lang === 'da'
-            ? 'Computational Ethnography: A New Method for Social Science'
-            : 'Computational Ethnography: A New Method for Social Science',
-          year: 2023
+          title: 'Transparency by Design: Auditing Black-Box Models in Public Sector AI',
+          year: 2024,
+          url: '',
+          source: 'Google Scholar'
         }
       ],
       research: {
-        technical: 'Mixed digital methods and computational ethnography combining anthropological fieldwork with large-scale social data analysis',
+        technical: 'Algorithmic fairness auditing, explainable AI (XAI), and bias mitigation in large language models',
         translated: lang === 'da'
-          ? 'Udvikler nye metoder der kombinerer klassisk antropologisk feltarbejde med big data-analyse. Undersøger hvordan opmærksomhedsøkonomien påvirker politiske og sociale processer.'
-          : 'Develops new methods combining classical anthropological fieldwork with big data analysis. Investigates how the attention economy affects political and social processes.',
+          ? 'Udvikler værktøjer der kan afsløre om AI-systemer diskriminerer bestemte grupper. Gør "sorte bokse" gennemsigtige, så beslutningstagere kan forstå og stole på AI.'
+          : 'Develops tools that can reveal whether AI systems discriminate against certain groups. Makes "black boxes" transparent so decision-makers can understand and trust AI.',
         whyItMatters: lang === 'da'
-          ? 'I en verden domineret af sociale medier og digital opmærksomhed, giver hans forskning indsigt i hvordan teknologi former politik, kultur og sociale relationer. Relevant for tech-regulering og medieforståelse.'
-          : 'In a world dominated by social media and digital attention, his research provides insights into how technology shapes politics, culture and social relations. Relevant for tech regulation and media understanding.'
+          ? 'Med EU AI Act bliver det lovpligtigt at dokumentere fairness i højrisiko-AI. Virksomheder har brug for konkrete metoder til compliance — det er præcis det denne forskning leverer.'
+          : 'With the EU AI Act, documenting fairness in high-risk AI becomes mandatory. Companies need concrete methods for compliance — that is exactly what this research delivers.'
       },
       applications: {
         beneficiaries: lang === 'da'
-          ? ['Tech-virksomheder (platformsdesign)', 'Medier og journalistik', 'Policy-makers (tech-regulering)', 'Forskningsinstitutioner (nye metoder)']
-          : ['Tech companies (platform design)', 'Media and journalism', 'Policy-makers (tech regulation)', 'Research institutions (new methods)'],
+          ? ['Offentlige myndigheder (AI i sagsbehandling)', 'Finanssektoren (kreditvurdering)', 'HR-tech (rekruttering)', 'Sundhedssektoren (diagnostik)']
+          : ['Public authorities (AI in case processing)', 'Financial sector (credit scoring)', 'HR-tech (recruitment)', 'Healthcare (diagnostics)'],
         howUsed: lang === 'da'
-          ? 'Hans forskning informerer debatten om opmærksomhedsøkonomi og social media-regulering. Computational anthropology-metoderne bruges til at forstå digitale fællesskaber og politisk mobilisering på en måde, der kombinerer kvalitative og kvantitative tilgange.'
-          : 'His research informs the debate on attention economy and social media regulation. Computational anthropology methods are used to understand digital communities and political mobilization in ways that combine qualitative and quantitative approaches.',
+          ? 'Bias-detektionsværktøjerne bruges af kommuner til at teste algoritmer i sagsbehandling. Finansvirksomheder anvender fairness-metrics til kreditmodeller. EU-projektet informerer direkte den kommende AI-regulering.'
+          : 'Bias detection tools used by municipalities to test algorithms in case processing. Financial companies use fairness metrics for credit models. EU project directly informs upcoming AI regulation.',
         impactAreas: lang === 'da'
-          ? 'SCIENTIFIC (nye tværfaglige metoder), SOCIAL (forståelse af digital kultur), POLICY (tech-regulering og medielovgivning)'
-          : 'SCIENTIFIC (new interdisciplinary methods), SOCIAL (understanding digital culture), POLICY (tech regulation and media legislation)',
+          ? 'POLICY (AI-regulering), SOCIAL (lige behandling), TECHNOLOGICAL (bedre AI-systemer)'
+          : 'POLICY (AI regulation), SOCIAL (equal treatment), TECHNOLOGICAL (better AI systems)',
         stakeholders: lang === 'da'
-          ? ['EU Digital Services Act', 'Danske medier', 'Tech-industrien', 'DFF og forskningsråd']
-          : ['EU Digital Services Act', 'Danish media', 'Tech industry', 'DFF and research councils'],
+          ? ['Digitaliseringsstyrelsen', 'Finanstilsynet', 'EU AI Office', 'Danske tech-virksomheder']
+          : ['Danish Agency for Digitisation', 'Financial Supervisory Authority', 'EU AI Office', 'Danish tech companies'],
         marketAnalysis: {
           competitors: lang === 'da'
-            ? 'Akademiske konkurrenter inkluderer MIT Media Lab og Oxford Internet Institute. Kommercielt konkurrerer metoden med traditionelle market research firms der nu tilbyder "digital ethnography".'
-            : 'Academic competitors include MIT Media Lab and Oxford Internet Institute. Commercially, the method competes with traditional market research firms now offering "digital ethnography".',
+            ? 'Akademisk: Oxford Internet Institute, MIT CSAIL. Kommercielt: IBM AI Fairness 360, Google What-If Tool. Fordel: fokus på europæisk regulering og offentlig sektor.'
+            : 'Academic: Oxford Internet Institute, MIT CSAIL. Commercial: IBM AI Fairness 360, Google What-If Tool. Advantage: focus on European regulation and public sector.',
           trends: lang === 'da'
-            ? 'Stigende efterspørgsel efter etisk tech-design og platformsregulering. EU\'s Digital Services Act skaber behov for evidensbaseret rådgivning. Tech-virksomheder søger alternative metoder til Big Tech\'s egne analyser.'
-            : 'Growing demand for ethical tech design and platform regulation. EU Digital Services Act creates need for evidence-based consulting. Tech companies seek alternatives to Big Tech\'s own analyses.',
+            ? 'EU AI Act træder i kraft 2025-2026. Eksplosiv efterspørgsel efter AI-audit og compliance-rådgivning. ESG-krav driver transparens i algoritmisk beslutningstagning.'
+            : 'EU AI Act takes effect 2025-2026. Explosive demand for AI audit and compliance consulting. ESG requirements drive transparency in algorithmic decision-making.',
           barriers: lang === 'da'
-            ? 'Metodens kompleksitet kræver tværfaglige teams (antropologer + data scientists). Høj indgangspris for virksomheder. Risiko for at forskningsværdien reduceres til "konsulentprodukter".'
-            : 'Method complexity requires interdisciplinary teams (anthropologists + data scientists). High entry cost for companies. Risk of research value being reduced to "consulting products".'
+            ? 'Mangel på standardiserede fairness-metrics. Virksomheder mangler teknisk kapacitet til selv at auditere. Reguleringslandskabet er stadig uklart.'
+            : 'Lack of standardized fairness metrics. Companies lack technical capacity for self-auditing. Regulatory landscape still unclear.'
         }
       },
       questions: lang === 'da' ? [
-        { q: 'I bruger "mixed digital methods" - kan du give et konkret eksempel på hvordan I kombinerede etnografi med big data i ERC-projektet?', why: 'Afklarer den specifikke metodologi og dens praktiske anvendelse' },
-        { q: 'Jeres forskning viser at opmærksomhedsøkonomi påvirker politik - hvilke specifikke resultater har I fundet i Mongoliet-studiet?', why: 'Dykker ned i konkrete forskningsresultater fremfor generelle påstande' },
-        { q: 'Hvilke virksomheder har allerede brugt computational anthropology baseret på jeres SODAS-metoder?', why: 'Validerer kommerciel anvendelse med konkrete eksempler' },
-        { q: 'Hvad er den største tekniske barriere I stødte på da I integrerede feltarbejdsdata med social media-data?', why: 'Identificerer praktiske udfordringer og løsninger fra deres erfaring' },
-        { q: 'Hvilke PhD-projekter under dig arbejder lige nu på noget der kunne blive til et spin-off?', why: 'Afdækker team-potentiale og pipeline for kommercialisering' }
+        { q: 'I jeres Villum-projekt tester I AI i offentlig sagsbehandling — hvilke konkrete bias-typer har I fundet?', why: 'Spørger til specifikke resultater fra igangværende forskning' },
+        { q: 'Jeres framework sammenligner fairness-metrics — hvilken metric fungerer bedst til kreditvurdering?', why: 'Kræver konkret anbefaling baseret på deres forskning' },
+        { q: 'Hvilke kommuner eller myndigheder har allerede brugt jeres audit-værktøjer?', why: 'Validerer praktisk anvendelse med navngivne partnere' },
+        { q: 'Hvad er den typiske tidsramme for en AI fairness-audit af et eksisterende system?', why: 'Giver konkret forretningsforståelse' },
+        { q: 'Hvordan adskiller jeres tilgang sig fra IBMs AI Fairness 360?', why: 'Positionerer forskningen i forhold til konkurrenterne' }
       ] : [
-        { q: 'You use "mixed digital methods" - can you give a concrete example of how you combined ethnography with big data in the ERC project?', why: 'Clarifies the specific methodology and its practical application' },
-        { q: 'Your research shows attention economy affects politics - what specific findings did you have in the Mongolia study?', why: 'Dives into concrete research results rather than general claims' },
-        { q: 'Which companies have already used computational anthropology based on your SODAS methods?', why: 'Validates commercial application with concrete examples' },
-        { q: 'What was the biggest technical barrier when integrating fieldwork data with social media data?', why: 'Identifies practical challenges and solutions from their experience' },
-        { q: 'Which PhD projects under you are currently working on something that could become a spin-off?', why: 'Uncovers team potential and pipeline for commercialization' }
-      ]
-    },
-    'guido': {
-      id: 'guido_makransky',
-      name: 'Guido Makransky',
-      title: 'Professor',
-      institute: 'Institut for Psykologi',
-      field: 'Educational Psychology & VR Learning',
-      pureUrl: 'https://researchprofiles.ku.dk/da/persons/guido-makransky/',
-      instituteUrl: 'https://psychology.ku.dk',
-      profile: {
-        background: lang === 'da'
-          ? 'Professor i pædagogisk psykologi. Leder af Virtual Learning Lab ved Københavns Universitet. Specialist i læring i immersive miljøer.'
-          : 'Professor of Educational Psychology. Head of Virtual Learning Lab at University of Copenhagen. Specialist in learning in immersive environments.',
-        focus: lang === 'da'
-          ? 'Udvikler evidensbaserede teorier om læring i Virtual Reality. Har skabt CAMIL-modellen (Cognitive Affective Model of Immersive Learning) som er internationalt anerkendt.'
-          : 'Develops evidence-based theories of learning in Virtual Reality. Created the CAMIL model (Cognitive Affective Model of Immersive Learning) which is internationally recognized.',
-        currentProjects: lang === 'da'
-          ? 'Forsker i VR til klimaadfærdsændring, kollaborativ VR-læring, og generativ AI i uddannelse. Eurostars-bevilling på €1,175M.'
-          : 'Researches VR for climate behavior change, collaborative VR learning, and generative AI in education. Eurostars grant of €1.175M.',
-        teaching: lang === 'da'
-          ? 'Pædagogisk Psykologi, Educational Technology'
-          : 'Educational Psychology, Educational Technology'
-      },
-      collaboration: {
-        coAuthors: lang === 'da'
-          ? ['Richard Mayer (UC Santa Barbara)', 'Jeremy Bailenson (Stanford)', 'Mirjam Thrysøe (KU)']
-          : ['Richard Mayer (UC Santa Barbara)', 'Jeremy Bailenson (Stanford)', 'Mirjam Thrysøe (KU)'],
-        institutions: lang === 'da'
-          ? ['Stanford Virtual Human Interaction Lab', 'Meta Reality Labs', 'UC Santa Barbara', 'Danish EdTech companies']
-          : ['Stanford Virtual Human Interaction Lab', 'Meta Reality Labs', 'UC Santa Barbara', 'Danish EdTech companies'],
-        commercialPotential: lang === 'da'
-          ? 'Direkte samarbejde med Meta og EdTech-industrien. CAMIL-modellen bruges allerede af kommercielle aktører til VR-træningsdesign.'
-          : 'Direct collaboration with Meta and EdTech industry. CAMIL model already used by commercial actors for VR training design.'
-      },
-      publications: [
-        {
-          title: lang === 'da'
-            ? 'The CAMIL Model: Understanding Immersive Learning in Virtual Reality'
-            : 'The CAMIL Model: Understanding Immersive Learning in Virtual Reality',
-          year: 2024
-        },
-        {
-          title: lang === 'da'
-            ? 'Virtual Reality for Climate Education: Behavioral Change Through Immersion'
-            : 'Virtual Reality for Climate Education: Behavioral Change Through Immersion',
-          year: 2023
-        }
-      ],
-      research: {
-        technical: 'Cognitive Affective Model of Immersive Learning (CAMIL) and Theory of Immersive Collaborative Learning (TICOL) for VR-based education',
-        translated: lang === 'da'
-          ? 'Udvikler videnskabelige modeller for hvordan mennesker lærer bedst i Virtual Reality. Forskningen viser hvornår VR virker bedre end traditionel undervisning - og hvornår det ikke gør.'
-          : 'Develops scientific models for how humans learn best in Virtual Reality. Research shows when VR works better than traditional teaching - and when it does not.',
-        whyItMatters: lang === 'da'
-          ? 'VR-markedet for uddannelse eksploderer, men mange investeringer fejler fordi de ikke er evidensbaserede. Guidos forskning giver konkrete guidelines for hvornår og hvordan VR skal bruges til læring.'
-          : 'The VR education market is exploding, but many investments fail because they are not evidence-based. Guido\'s research provides concrete guidelines for when and how VR should be used for learning.'
-      },
-      applications: {
-        beneficiaries: lang === 'da'
-          ? ['EdTech-virksomheder (VR-læring)', 'Skoler og universiteter', 'Corporate training (virksomhedstræning)', 'Klimakommunikation']
-          : ['EdTech companies (VR learning)', 'Schools and universities', 'Corporate training', 'Climate communication'],
-        howUsed: lang === 'da'
-          ? 'CAMIL-modellen bruges af EdTech-virksomheder til at designe effektive VR-læringsoplevelser. Forskningen anvendes også til klimakommunikation - VR-oplevelser der får folk til at ændre adfærd mod mere bæredygtige valg.'
-          : 'The CAMIL model is used by EdTech companies to design effective VR learning experiences. Research is also applied to climate communication - VR experiences that get people to change behavior toward more sustainable choices.',
-        impactAreas: lang === 'da'
-          ? 'EDUCATIONAL (bedre læringsdesign), TECHNOLOGICAL (VR-guidelines), ENVIRONMENTAL (klimaadfærd gennem VR)'
-          : 'EDUCATIONAL (better learning design), TECHNOLOGICAL (VR guidelines), ENVIRONMENTAL (climate behavior through VR)',
-        stakeholders: lang === 'da'
-          ? ['Meta/Oculus', 'Danske EdTech-virksomheder', 'Undervisningsministeriet', 'Corporate training-industrien']
-          : ['Meta/Oculus', 'Danish EdTech companies', 'Ministry of Education', 'Corporate training industry'],
-        marketAnalysis: {
-          competitors: lang === 'da'
-            ? 'Akademisk konkurrence fra Stanford Virtual Lab og UC Santa Barbara. Kommercielt konkurrerer med VR-udviklingsselskaber uden videnskabelig baggrund samt traditionelle e-learning platforme.'
-            : 'Academic competition from Stanford Virtual Lab and UC Santa Barbara. Commercially competes with VR development companies without scientific background and traditional e-learning platforms.',
-          trends: lang === 'da'
-            ? 'Eksplosiv vækst i corporate VR training (forventet 30% årlig vækst til 2027). Apple Vision Pro demokratiserer adgang. ESG-rapporteringskrav driver efterspørgsel efter evidensbaseret klimakommunikation.'
-            : 'Explosive growth in corporate VR training (expected 30% annual growth to 2027). Apple Vision Pro democratizes access. ESG reporting requirements drive demand for evidence-based climate communication.',
-          barriers: lang === 'da'
-            ? 'Høje udviklingsomkostninger for quality VR-content. "Tech-solutionism" bias - mange tror VR altid er bedre. Risk for "pilot purgatory" hvor virksomheder tester men ikke implementerer.'
-            : 'High development costs for quality VR content. "Tech-solutionism" bias - many believe VR is always better. Risk of "pilot purgatory" where companies test but don\'t implement.'
-        }
-      },
-      questions: lang === 'da' ? [
-        { q: 'CAMIL-modellen nævner "cognitive load" - hvad er den optimale sessionsvarighed I fandt i jeres meta-analyse?', why: 'Spørger til specifikt forskningsresultat fra deres publicerede arbejde' },
-        { q: 'I Eurostars-projektet om klimaadfærd - hvilken specifik adfærdsændring målte I, og hvor stor var effekten?', why: 'Kræver konkrete data fra deres igangværende forskning' },
-        { q: 'Hvilke danske EdTech-virksomheder har licenseret eller implementeret CAMIL-modellen?', why: 'Validerer kommerciel anvendelse med navngivne partnere' },
-        { q: 'Jeres meta-analyse viste hvornår VR IKKE virker - hvad er de tre vigtigste kontraindikationer?', why: 'Tester dybden af deres evidensbaserede tilgang' },
-        { q: 'Hvad koster det typisk at udvikle 1 times VR-læring der følger CAMIL-principperne?', why: 'Giver konkret markedsforståelse og ROI-grundlag' }
-      ] : [
-        { q: 'The CAMIL model mentions "cognitive load" - what was the optimal session duration you found in your meta-analysis?', why: 'Asks about specific research finding from their published work' },
-        { q: 'In the Eurostars project on climate behavior - what specific behavior change did you measure, and how large was the effect?', why: 'Requires concrete data from their ongoing research' },
-        { q: 'Which Danish EdTech companies have licensed or implemented the CAMIL model?', why: 'Validates commercial application with named partners' },
-        { q: 'Your meta-analysis showed when VR does NOT work - what are the three most important contraindications?', why: 'Tests the depth of their evidence-based approach' },
-        { q: 'What does it typically cost to develop 1 hour of VR learning following CAMIL principles?', why: 'Provides concrete market understanding and ROI basis' }
+        { q: 'In your Villum project testing AI in public case processing — what specific types of bias have you found?', why: 'Asks about specific results from ongoing research' },
+        { q: 'Your framework compares fairness metrics — which metric works best for credit scoring?', why: 'Requires concrete recommendation based on their research' },
+        { q: 'Which municipalities or authorities have already used your audit tools?', why: 'Validates practical application with named partners' },
+        { q: 'What is the typical timeframe for an AI fairness audit of an existing system?', why: 'Provides concrete business understanding' },
+        { q: 'How does your approach differ from IBM\'s AI Fairness 360?', why: 'Positions the research relative to competitors' }
       ]
     }
   };
@@ -1413,7 +1314,13 @@ ${t.generatedBy}
               />
             </div>
 
-            <div className="mt-4 flex items-center justify-end">
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                onClick={() => startAnalysis(true, 'demo')}
+                className="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-all border border-gray-300"
+              >
+                {lang === 'da' ? '👁 Se demo (fiktiv forsker)' : '👁 View demo (fictional researcher)'}
+              </button>
               <button
                 onClick={() => startAnalysis(false)}
                 disabled={!inputUrl && !inputName}
@@ -1451,6 +1358,9 @@ ${t.generatedBy}
                 />
               </div>
               <p className="text-center text-sm text-gray-500 mt-3">{progress}%</p>
+              <p className="text-center text-xs text-gray-400 mt-2">
+                {lang === 'da' ? 'Dette tager typisk 30–60 sekunder' : 'This typically takes 30–60 seconds'}
+              </p>
             </div>
           </div>
         </div>
@@ -1581,9 +1491,9 @@ ${t.generatedBy}
               <div className="flex items-center gap-4">
                 <button
                   onClick={resetSearch}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-all"
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition-all flex items-center gap-2 border border-gray-300"
                 >
-                  <FileText className="w-5 h-5 text-gray-600" />
+                  ← {t.backToSearch}
                 </button>
                 <div>
                   <h1 className="text-xl font-bold text-gray-900">{r.name}</h1>
