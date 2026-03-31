@@ -290,7 +290,7 @@ const translations = {
 };
 
 // Cloudflare Worker proxy URL — set via .env file: REACT_APP_PROXY_URL=https://your-worker.workers.dev
-const PROXY_URL = process.env.REACT_APP_PROXY_URL || 'https://research-translator-ku-lighthouse.jescacherisevia.workers.dev';
+const PROXY_URL = process.env.REACT_APP_PROXY_URL || 'https://research-translator-ku-lighthouse.aneg.workers.dev';
 
 // Helper function to fetch KU Research Profiles data through the proxy
 const fetchViaProxy = async (url) => {
