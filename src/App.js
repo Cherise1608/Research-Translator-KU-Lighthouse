@@ -620,7 +620,7 @@ Remember: Return ONLY the JSON array, nothing else.`;
 
   // Multi-turn API call helper function with proper tool handling
   // All API calls go through the Cloudflare Worker proxy (API key stored securely in Worker)
-  const callClaudeWithTools = async (messages, model = "claude-sonnet-4-20250514", maxTokens = 8000) => {
+  const callClaudeWithTools = async (messages, model = "claude-sonnet-4-6", maxTokens = 8000) => {
     const data = await callAnthropicViaProxy({
       model: model,
       max_tokens: maxTokens,
