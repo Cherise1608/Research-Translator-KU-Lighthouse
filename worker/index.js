@@ -77,12 +77,8 @@ async function getPersonSlugs() {
   return slugs;
 }
 
-function matchSlugs(query, slugs) {
-  const qn = normalize(query);
-  const qTokens = qn.split(/[\s-]+/).filter(Boolean);
-  if (qTokens.length === 0) return [];
-  const targetSlug = qTokens.join('-');
-
+function scoreSlugsAgainstTokens(tokens, slugs) {
+  const targetSlug = tokens.join('-');
   const scored = [];
   for (const slug of slugs) {
     const slugNorm = normalize(slug.replace(/-/g, ' '));
@@ -94,29 +90,64 @@ function matchSlugs(query, slugs) {
     if (slugBaseStr === targetSlug) {
       score = slugHasDisambig ? 950 : 1000;
     } else {
-      const allMatch = qTokens.every((t) => slugBaseTokens.includes(t));
+      const allMatch = tokens.every((t) => slugBaseTokens.includes(t));
       if (allMatch) {
-        score = 600;
-        score -= Math.abs(slugBaseTokens.length - qTokens.length) * 30;
+        score = 600 - Math.abs(slugBaseTokens.length - tokens.length) * 30;
       } else {
-        const allPrefix = qTokens.every((t) =>
+        // Forward prefix only: query token must be prefix of a slug token.
+        // Reverse direction would match "Nielsen" against slug "Niels" etc.
+        const allPrefix = tokens.every((t) =>
           slugBaseTokens.some((st) => {
-            const minLen = Math.min(t.length, st.length);
-            if (minLen < 4) return t === st;
-            return st.startsWith(t) || t.startsWith(st);
+            if (t.length < 4 || st.length < 4) return t === st;
+            return st.startsWith(t);
           })
         );
         if (allPrefix) {
-          score = 300;
-          score -= Math.abs(slugBaseTokens.length - qTokens.length) * 20;
+          score = 300 - Math.abs(slugBaseTokens.length - tokens.length) * 20;
         }
       }
     }
 
     if (score > 0) scored.push({ slug, score });
   }
-
   scored.sort((a, b) => b.score - a.score);
+  return scored;
+}
+
+function matchSlugs(query, slugs) {
+  const qn = normalize(query);
+  let qTokens = qn.split(/[\s-]+/).filter(Boolean);
+
+  // Drop single-letter initial tokens ("P." in "Anders P. Jensen") when enough
+  // substantive tokens remain. Keep them if stripping would leave <2 tokens,
+  // so single-surname queries like "Jensen" still work.
+  if (qTokens.length >= 3) {
+    const stripped = qTokens.filter((t) => t.length >= 2);
+    if (stripped.length >= 2) qTokens = stripped;
+  }
+  if (qTokens.length === 0) return [];
+
+  let scored = scoreSlugsAgainstTokens(qTokens, slugs);
+
+  // N-1 fallback: if the full query yields nothing and we have 3+ tokens,
+  // retry with each token dropped in turn. Handles cases like
+  // "Mikkel Bolt Rasmussen" where the KU Pure slug is just "mikkel-bolt".
+  if (scored.length === 0 && qTokens.length >= 3) {
+    const seen = new Set();
+    const combined = [];
+    for (let i = 0; i < qTokens.length; i++) {
+      const reduced = qTokens.filter((_, idx) => idx !== i);
+      const sub = scoreSlugsAgainstTokens(reduced, slugs);
+      for (const r of sub) {
+        if (seen.has(r.slug)) continue;
+        seen.add(r.slug);
+        combined.push({ slug: r.slug, score: r.score - 200 });
+      }
+    }
+    combined.sort((a, b) => b.score - a.score);
+    scored = combined;
+  }
+
   return scored.slice(0, 7).map(({ slug }) => ({
     name: slugToDisplayName(slug),
     title: '',
