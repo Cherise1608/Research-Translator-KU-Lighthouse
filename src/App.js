@@ -472,7 +472,7 @@ export default function ResearchTranslator() {
     }
   };
 
-  // Search for researchers by name using Claude with web_search
+  // Search for researchers by name via deterministic KU Pure sitemap lookup in the Worker
   const searchResearchers = async (name) => {
     setState('processing');
     setProgress(0);
@@ -480,86 +480,31 @@ export default function ResearchTranslator() {
     setError('');
 
     try {
-      setProgress(20);
+      setProgress(30);
 
-      // Use Claude to search Pure for researchers
-      const searchPrompt = `Search for researchers at University of Copenhagen (KU) on researchprofiles.ku.dk with the name "${name}".
+      const response = await fetch(`${PROXY_URL}/search?name=${encodeURIComponent(name)}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Search request failed: ${response.status} - ${errorText}`);
+      }
+      const data = await response.json();
 
-Your task:
-1. Search for this person on researchprofiles.ku.dk (Copenhagen University's research portal)
-2. Find ALL researchers whose names match or are similar to "${name}"
-3. For each match, extract: full name, academic title, institute/department, and their Pure profile URL
-
-Return ONLY a valid JSON array (no markdown, no explanation, just the array):
-[
-  {
-    "name": "Full Name",
-    "title": "Academic Title (e.g., Professor, Associate Professor, Postdoc)",
-    "institute": "Institute or Department name",
-    "pureUrl": "https://researchprofiles.ku.dk/... or https://researchprofiles.ku.dk/..."
-  }
-]
-
-If you find multiple people with similar names, include ALL of them (up to 7 results).
-If you find exactly one person, still return an array with that one result.
-If you find NO matches, return an empty array: []
-
-Remember: Return ONLY the JSON array, nothing else.`;
-
-      const searchData = await callClaudeWithTools([{
-        role: "user",
-        content: searchPrompt
-      }], "claude-haiku-4-5-20251001", 2000);
-
-      setProgress(70);
+      setProgress(80);
       setCurrentStep(t.parsingResults);
 
-      // Extract text from response
-      let responseText = '';
-      if (searchData.content) {
-        for (const block of searchData.content) {
-          if (block.type === 'text') {
-            responseText += block.text;
-          }
-        }
-      }
-
-      // Parse the JSON array from the response
-      let results = [];
-      try {
-        // Clean the response - remove markdown code blocks if present
-        let cleanText = responseText.trim();
-        cleanText = cleanText.replace(/```json\s*/g, '').replace(/```\s*/g, '');
-
-        // Find the JSON array
-        const arrayMatch = cleanText.match(/\[[\s\S]*\]/);
-        if (arrayMatch) {
-          results = JSON.parse(arrayMatch[0]);
-        }
-      } catch (parseError) {
-        console.error('Failed to parse search results:', parseError);
-        results = [];
-      }
-
+      const results = (data.results || []).filter(r => r.name && r.pureUrl);
       setProgress(100);
 
-      // Filter out any invalid results
-      results = results.filter(r => r.name && r.pureUrl);
-
       if (results.length === 0) {
-        // No results found - show error state
         setSearchResults([]);
         setState('selection');
       } else if (results.length === 1) {
-        // Single match - go directly to briefing
         setSearchResults(results);
         await generateBriefing(results[0].pureUrl);
       } else {
-        // Multiple matches - show selection UI
         setSearchResults(results);
         setState('selection');
       }
-
     } catch (err) {
       console.error('Search error:', err);
       setError(t.analysisFailed);
